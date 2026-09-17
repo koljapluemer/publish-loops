@@ -1,6 +1,7 @@
 import { BaseEdge, EdgeLabelRenderer, getBezierPath, useInternalNode, type EdgeProps } from '@xyflow/react';
 import { Trash2 } from 'lucide-react';
 import type { FlowEdge } from '../shared/flowTypes';
+import { useEditableValue } from '../hooks/useEditableValue';
 import { getEdgeParams } from './edgeGeometry';
 import { useFlowInteraction } from './FlowInteractionContext';
 
@@ -8,6 +9,7 @@ function FloatingEdge({ id, source, target, data, style, markerEnd }: EdgeProps<
   const { mode, updateEdgeLabel, deleteEdge } = useFlowInteraction();
   const sourceNode = useInternalNode(source);
   const targetNode = useInternalNode(target);
+  const [label, setLabel, flushLabel] = useEditableValue(data?.label ?? '', (next) => updateEdgeLabel(id, next));
 
   if (!sourceNode || !targetNode) {
     return null;
@@ -24,7 +26,6 @@ function FloatingEdge({ id, source, target, data, style, markerEnd }: EdgeProps<
     targetPosition: targetPos,
   });
 
-  const label = data?.label ?? '';
   const showLabel = mode === 'edit' || label.length > 0;
 
   return (
@@ -44,7 +45,8 @@ function FloatingEdge({ id, source, target, data, style, markerEnd }: EdgeProps<
               <div className="edge-label-edit">
                 <input
                   value={label}
-                  onChange={(event) => updateEdgeLabel(id, event.target.value)}
+                  onChange={(event) => setLabel(event.target.value)}
+                  onBlur={flushLabel}
                   placeholder="Label..."
                 />
                 <button

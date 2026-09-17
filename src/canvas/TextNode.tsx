@@ -4,6 +4,7 @@ import type { ClipboardEvent } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import type { FlowNode, ImagePosition } from '../shared/flowTypes';
+import { useEditableValue } from '../hooks/useEditableValue';
 import { useFlowInteraction } from './FlowInteractionContext';
 import { DRAG_HANDLE_CLASS_NAME } from './createTextNode';
 import { useNodeImageSrc } from './useNodeImageSrc';
@@ -25,6 +26,8 @@ function TextNode({ id, data }: NodeProps<FlowNode>) {
   const image = data.image;
   const imagePosition = image?.position ?? 'above';
   const imageSrc = useNodeImageSrc(image?.path);
+
+  const [text, setText, flushText] = useEditableValue(data.text, (next) => updateNodeText(id, next));
 
   const handleAddImage = async () => {
     const path = await window.flowsApi.selectImage();
@@ -114,8 +117,9 @@ function TextNode({ id, data }: NodeProps<FlowNode>) {
         {mode === 'edit' ? (
           <textarea
             className="nodrag nopan text-node-textarea"
-            value={data.text}
-            onChange={(event) => updateNodeText(id, event.target.value)}
+            value={text}
+            onChange={(event) => setText(event.target.value)}
+            onBlur={flushText}
             onPaste={handlePaste}
             placeholder="Node text..."
           />

@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import type { MouseEvent as ReactMouseEvent } from 'react';
 import {
   Background,
@@ -65,6 +65,13 @@ function FlowCanvas({ slug, mode }: FlowCanvasProps) {
     [isEdit, screenToFlowPosition, addNode],
   );
 
+  // Kept referentially stable so that editing one node/edge doesn't force
+  // every other node/edge on the canvas to re-render along with it.
+  const interaction = useMemo(
+    () => ({ mode, updateNodeText, setNodeImage, setNodeImagePosition, updateEdgeLabel, deleteNode, deleteEdge }),
+    [mode, updateNodeText, setNodeImage, setNodeImagePosition, updateEdgeLabel, deleteNode, deleteEdge],
+  );
+
   if (state.status === 'idle' || state.status === 'loading') {
     return <div className="flow-canvas-message">Loading…</div>;
   }
@@ -74,9 +81,7 @@ function FlowCanvas({ slug, mode }: FlowCanvasProps) {
   }
 
   return (
-    <FlowInteractionProvider
-      value={{ mode, updateNodeText, setNodeImage, setNodeImagePosition, updateEdgeLabel, deleteNode, deleteEdge }}
-    >
+    <FlowInteractionProvider value={interaction}>
       <div className="flow-canvas">
         <ReactFlow
           nodes={state.nodes}
