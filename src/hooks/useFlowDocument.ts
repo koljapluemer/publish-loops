@@ -9,10 +9,21 @@ import {
 } from '@xyflow/react';
 import type { FlowChartFile, FlowEdge, FlowNode } from '../shared/flowTypes';
 
+export type PendingUndo =
+  | { kind: 'node'; node: FlowNode; edges: FlowEdge[] }
+  | { kind: 'edge'; edge: FlowEdge };
+
 type FlowDocState =
   | { status: 'idle' }
   | { status: 'loading'; slug: string }
-  | { status: 'ready'; slug: string; name: string; nodes: FlowNode[]; edges: FlowEdge[] }
+  | {
+      status: 'ready';
+      slug: string;
+      name: string;
+      nodes: FlowNode[];
+      edges: FlowEdge[];
+      pendingUndo: PendingUndo | null;
+    }
   | { status: 'error'; slug: string; message: string };
 
 export type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
@@ -27,14 +38,25 @@ type FlowDocAction =
   | { type: 'CONNECT'; connection: Connection }
   | { type: 'ADD_NODE'; node: FlowNode }
   | { type: 'UPDATE_NODE_TEXT'; nodeId: string; text: string }
-  | { type: 'UPDATE_EDGE_LABEL'; edgeId: string; label: string };
+  | { type: 'UPDATE_EDGE_LABEL'; edgeId: string; label: string }
+  | { type: 'DELETE_NODE'; nodeId: string }
+  | { type: 'DELETE_EDGE'; edgeId: string }
+  | { type: 'UNDO_DELETE' }
+  | { type: 'DISMISS_UNDO' };
 
 function reducer(state: FlowDocState, action: FlowDocAction): FlowDocState {
   switch (action.type) {
     case 'LOAD_START':
       return { status: 'loading', slug: action.slug };
     case 'LOAD_SUCCESS':
-      return { status: 'ready', slug: action.slug, name: action.name, nodes: action.nodes, edges: action.edges };
+      return {
+        status: 'ready',
+        slug: action.slug,
+        name: action.name,
+        nodes: action.nodes,
+        edges: action.edges,
+        pendingUndo: null,
+      };
     case 'LOAD_ERROR':
       return { status: 'error', slug: action.slug, message: action.message };
     case 'RESET':
@@ -71,6 +93,36 @@ function reducer(state: FlowDocState, action: FlowDocAction): FlowDocState {
           edge.id === action.edgeId ? { ...edge, data: { ...edge.data, label: action.label } } : edge,
         ),
       };
+    case 'DELETE_NODE': {
+      const node = state.nodes.find((candidate) => candidate.id === action.nodeId);
+      if (!node) return state;
+      const removedEdges = state.edges.filter((edge) => edge.source === action.nodeId || edge.target === action.nodeId);
+      return {
+        ...state,
+        nodes: state.nodes.filter((candidate) => candidate.id !== action.nodeId),
+        edges: state.edges.filter((edge) => edge.source !== action.nodeId && edge.target !== action.nodeId),
+        pendingUndo: { kind: 'node', node, edges: removedEdges },
+      };
+    }
+    case 'DELETE_EDGE': {
+      const edge = state.edges.find((candidate) => candidate.id === action.edgeId);
+      if (!edge) return state;
+      return {
+        ...state,
+        edges: state.edges.filter((candidate) => candidate.id !== action.edgeId),
+        pendingUndo: { kind: 'edge', edge },
+      };
+    }
+    case 'UNDO_DELETE': {
+      if (!state.pendingUndo) return state;
+      if (state.pendingUndo.kind === 'node') {
+        const { node, edges } = state.pendingUndo;
+        return { ...state, nodes: [...state.nodes, node], edges: [...state.edges, ...edges], pendingUndo: null };
+      }
+      return { ...state, edges: [...state.edges, state.pendingUndo.edge], pendingUndo: null };
+    }
+    case 'DISMISS_UNDO':
+      return { ...state, pendingUndo: null };
     default:
       return state;
   }
@@ -161,5 +213,37 @@ export function useFlowDocument(slug: string | null) {
     dispatch({ type: 'UPDATE_EDGE_LABEL', edgeId, label });
   }, []);
 
-  return { state, saveStatus, onNodesChange, onEdgesChange, onConnect, addNode, updateNodeText, updateEdgeLabel };
+  const deleteNode = useCallback((nodeId: string) => {
+    dispatch({ type: 'DELETE_NODE', nodeId });
+  }, []);
+
+  const deleteEdge = useCallback((edgeId: string) => {
+    dispatch({ type: 'DELETE_EDGE', edgeId });
+  }, []);
+
+  const undoDelete = useCallback(() => {
+    dispatch({ type: 'UNDO_DELETE' });
+  }, []);
+
+  const dismissUndo = useCallback(() => {
+    dispatch({ type: 'DISMISS_UNDO' });
+  }, []);
+
+  const pendingUndo = state.status === 'ready' ? state.pendingUndo : null;
+
+  return {
+    state,
+    saveStatus,
+    onNodesChange,
+    onEdgesChange,
+    onConnect,
+    addNode,
+    updateNodeText,
+    updateEdgeLabel,
+    deleteNode,
+    deleteEdge,
+    pendingUndo,
+    undoDelete,
+    dismissUndo,
+  };
 }

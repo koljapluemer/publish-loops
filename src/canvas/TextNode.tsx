@@ -1,5 +1,5 @@
 import { Handle, Position, useConnection, type NodeProps } from '@xyflow/react';
-import { GripVertical } from 'lucide-react';
+import { GripVertical, Trash2 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import type { FlowNode } from '../shared/flowTypes';
@@ -7,7 +7,7 @@ import { useFlowInteraction } from './FlowInteractionContext';
 import { DRAG_HANDLE_CLASS_NAME } from './createTextNode';
 
 function TextNode({ id, data }: NodeProps<FlowNode>) {
-  const { mode, updateNodeText } = useFlowInteraction();
+  const { mode, updateNodeText, deleteNode } = useFlowInteraction();
   const connection = useConnection();
   // Whole-card "drop here" cue: lights up any node that's a legal target
   // while a connection is actively being dragged from a different node.
@@ -32,6 +32,14 @@ function TextNode({ id, data }: NodeProps<FlowNode>) {
         <>
           <div className={`text-node-header ${DRAG_HANDLE_CLASS_NAME}`}>
             <GripVertical size={14} />
+            <button
+              type="button"
+              className="nodrag text-node-delete-button"
+              onClick={() => deleteNode(id)}
+              title="Delete node"
+            >
+              <Trash2 size={13} />
+            </button>
           </div>
           <textarea
             className="nodrag nopan text-node-textarea"

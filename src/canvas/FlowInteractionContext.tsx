@@ -5,6 +5,8 @@ export interface FlowInteraction {
   mode: AppMode;
   updateNodeText: (nodeId: string, text: string) => void;
   updateEdgeLabel: (edgeId: string, label: string) => void;
+  deleteNode: (nodeId: string) => void;
+  deleteEdge: (edgeId: string) => void;
 }
 
 const FlowInteractionContext = createContext<FlowInteraction | null>(null);

@@ -9,6 +9,7 @@ import { FlowInteractionProvider } from './FlowInteractionContext';
 import FloatingConnectionLine from './FloatingConnectionLine';
 import FloatingEdge from './FloatingEdge';
 import TextNode from './TextNode';
+import UndoToast from './UndoToast';
 
 // Module-level constants: nodeTypes/edgeTypes must keep a stable identity
 // across renders, otherwise React Flow remounts every node/edge (which would
@@ -22,8 +23,21 @@ interface FlowCanvasProps {
 }
 
 function FlowCanvas({ slug, mode }: FlowCanvasProps) {
-  const { state, saveStatus, onNodesChange, onEdgesChange, onConnect, addNode, updateNodeText, updateEdgeLabel } =
-    useFlowDocument(slug);
+  const {
+    state,
+    saveStatus,
+    onNodesChange,
+    onEdgesChange,
+    onConnect,
+    addNode,
+    updateNodeText,
+    updateEdgeLabel,
+    deleteNode,
+    deleteEdge,
+    pendingUndo,
+    undoDelete,
+    dismissUndo,
+  } = useFlowDocument(slug);
   const { screenToFlowPosition } = useReactFlow();
   const isEdit = mode === 'edit';
 
@@ -48,7 +62,7 @@ function FlowCanvas({ slug, mode }: FlowCanvasProps) {
   }
 
   return (
-    <FlowInteractionProvider value={{ mode, updateNodeText, updateEdgeLabel }}>
+    <FlowInteractionProvider value={{ mode, updateNodeText, updateEdgeLabel, deleteNode, deleteEdge }}>
       <div className="flow-canvas">
         <ReactFlow
           nodes={state.nodes}
@@ -71,8 +85,11 @@ function FlowCanvas({ slug, mode }: FlowCanvasProps) {
           {isEdit && <Controls />}
         </ReactFlow>
         {isEdit && <AddNodeButton onAdd={addNode} />}
-        {saveStatus === 'saving' && <div className="save-status">Saving…</div>}
-        {saveStatus === 'error' && <div className="save-status save-status--error">Save failed</div>}
+        <div className="top-right-stack">
+          {saveStatus === 'saving' && <div className="save-status">Saving…</div>}
+          {saveStatus === 'error' && <div className="save-status save-status--error">Save failed</div>}
+          {pendingUndo && <UndoToast pendingUndo={pendingUndo} onUndo={undoDelete} onDismiss={dismissUndo} />}
+        </div>
       </div>
     </FlowInteractionProvider>
   );
