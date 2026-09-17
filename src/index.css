@@ -157,8 +157,62 @@ body {
   opacity: 0;
 }
 
+/* Target is inert at rest (isConnectableStart=false on the Handle), so it's
+   pointer-events:none and fully click-through to the header/textarea
+   beneath it until a connection is actively being dragged in. That makes
+   it safe to size it to cover the whole card: dropping anywhere on a node
+   attaches the edge, rather than needing to hit a tiny handle precisely
+   (React Flow's own drop resolution checks elementFromPoint first, before
+   falling back to a radius search around a handle's center). The visible
+   "you can drop here" cue is the whole-card ring below, driven by
+   useConnection() in TextNode.tsx — this handle itself stays invisible. */
+.text-node--edit .text-node-handle-target {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  transform: none;
+}
+
+/* Source is interactive at rest (it's how you start a drag), so it stays a
+   small dot fully outside the card — covering the card here would block
+   clicks on the header/textarea underneath it. */
+.text-node--edit .text-node-handle-source {
+  width: 12px;
+  height: 12px;
+  left: 50%;
+  top: auto;
+  bottom: -15px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  background: #9a9a9a;
+  box-shadow: 0 0 0 1px #ccc;
+  opacity: 0.9;
+  transform: translate(-50%, 0);
+  transition:
+    background-color 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.1s ease;
+}
+
+/* connectionindicator/connectingfrom are added by React Flow itself to
+   whichever handles are currently interactive — style off those rather
+   than guessing at pointer state ourselves. */
+.text-node--edit .text-node-handle-source.connectionindicator:hover {
+  background: #1a1a1a;
+  transform: translate(-50%, 0) scale(1.3);
+  cursor: crosshair;
+}
+
+.text-node--edit .text-node-handle-source.connectingfrom {
+  background: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25);
+}
+
 .text-node {
-  min-width: 160px;
+  width: 220px;
   min-height: 60px;
   border: 1px solid #ccc;
   border-radius: 6px;
@@ -172,10 +226,14 @@ body {
 }
 
 .text-node--preview {
-  border: none;
-  min-width: auto;
   min-height: auto;
-  box-shadow: none;
+}
+
+/* Whole-card cue for a legal drop target while a connection is being
+   dragged in from elsewhere — forgiving to aim at, not just the dot. Comes
+   after .text-node--edit so its ring wins over the resting shadow. */
+.text-node--connection-target {
+  box-shadow: 0 0 0 2px #2563eb;
 }
 
 .text-node-header {

@@ -1,7 +1,10 @@
-import { Background, Controls, ReactFlow, type EdgeTypes, type NodeTypes } from '@xyflow/react';
+import { useCallback } from 'react';
+import type { MouseEvent as ReactMouseEvent } from 'react';
+import { Background, Controls, ReactFlow, useReactFlow, type EdgeTypes, type NodeTypes } from '@xyflow/react';
 import { useFlowDocument } from '../hooks/useFlowDocument';
 import type { AppMode } from '../shared/appMode';
 import AddNodeButton from './AddNodeButton';
+import { createTextNode } from './createTextNode';
 import { FlowInteractionProvider } from './FlowInteractionContext';
 import FloatingConnectionLine from './FloatingConnectionLine';
 import FloatingEdge from './FloatingEdge';
@@ -21,6 +24,20 @@ interface FlowCanvasProps {
 function FlowCanvas({ slug, mode }: FlowCanvasProps) {
   const { state, saveStatus, onNodesChange, onEdgesChange, onConnect, addNode, updateNodeText, updateEdgeLabel } =
     useFlowDocument(slug);
+  const { screenToFlowPosition } = useReactFlow();
+  const isEdit = mode === 'edit';
+
+  // React Flow's onPaneClick fires on every click; a native `detail` of 2
+  // (browser-reported double-click) is what tells single- and double-click
+  // apart, so no manual timing/threshold tracking is needed.
+  const handlePaneDoubleClick = useCallback(
+    (event: ReactMouseEvent) => {
+      if (!isEdit || event.detail < 2) return;
+      const position = screenToFlowPosition({ x: event.clientX, y: event.clientY });
+      addNode(createTextNode(position));
+    },
+    [isEdit, screenToFlowPosition, addNode],
+  );
 
   if (state.status === 'idle' || state.status === 'loading') {
     return <div className="flow-canvas-message">Loading…</div>;
@@ -29,8 +46,6 @@ function FlowCanvas({ slug, mode }: FlowCanvasProps) {
   if (state.status === 'error') {
     return <div className="flow-canvas-message flow-canvas-message--error">Failed to load flow: {state.message}</div>;
   }
-
-  const isEdit = mode === 'edit';
 
   return (
     <FlowInteractionProvider value={{ mode, updateNodeText, updateEdgeLabel }}>
@@ -41,12 +56,15 @@ function FlowCanvas({ slug, mode }: FlowCanvasProps) {
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
+          onPaneClick={handlePaneDoubleClick}
           nodeTypes={nodeTypes}
           edgeTypes={edgeTypes}
           connectionLineComponent={FloatingConnectionLine}
+          connectionRadius={40}
           nodesDraggable={isEdit}
           nodesConnectable={isEdit}
           elementsSelectable={isEdit}
+          zoomOnDoubleClick={!isEdit}
           proOptions={{ hideAttribution: true }}
         >
           {isEdit && <Background />}

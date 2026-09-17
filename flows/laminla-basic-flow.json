@@ -17,8 +17,8 @@
       "id": "ca3bb197-88e5-4598-9b9b-695c686d9051",
       "type": "text",
       "position": {
-        "x": 851.6344910014265,
-        "y": 331.48554212850865
+        "x": 1046.6344910014263,
+        "y": 394.48554212850865
       },
       "data": {
         "text": "wait 3 seconds"
@@ -36,7 +36,47 @@
         "text": "test if learner remembers the phrase with a standard digital flashcard flow"
       },
       "dragHandle": ".custom-drag-handle"
+    },
+    {
+      "id": "43fe4b92-95c3-4901-a35c-57d438e7fcf8",
+      "type": "text",
+      "position": {
+        "x": 1014.3865341454892,
+        "y": 660.7632119810567
+      },
+      "data": {
+        "text": ""
+      },
+      "dragHandle": ".custom-drag-handle"
     }
   ],
-  "edges": []
+  "edges": [
+    {
+      "id": "xy-edge__49d1b368-3c34-468a-935f-90ea80a2fbad-ca3bb197-88e5-4598-9b9b-695c686d9051",
+      "type": "floating",
+      "source": "49d1b368-3c34-468a-935f-90ea80a2fbad",
+      "target": "ca3bb197-88e5-4598-9b9b-695c686d9051",
+      "data": {
+        "label": "when ready"
+      }
+    },
+    {
+      "id": "xy-edge__ca3bb197-88e5-4598-9b9b-695c686d9051-b5bbd0ca-c230-4495-9ed6-0a09b3db5564",
+      "type": "floating",
+      "source": "ca3bb197-88e5-4598-9b9b-695c686d9051",
+      "target": "b5bbd0ca-c230-4495-9ed6-0a09b3db5564",
+      "data": {
+        "label": "automatically switch"
+      }
+    },
+    {
+      "id": "xy-edge__b5bbd0ca-c230-4495-9ed6-0a09b3db5564-49d1b368-3c34-468a-935f-90ea80a2fbad",
+      "type": "floating",
+      "source": "b5bbd0ca-c230-4495-9ed6-0a09b3db5564",
+      "target": "49d1b368-3c34-468a-935f-90ea80a2fbad",
+      "data": {
+        "label": "load random sentence and go here"
+      }
+    }
+  ]
 }

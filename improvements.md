@@ -1,0 +1,4 @@
+- Allow double-clicking the canvas to create a new node at this position
+- There is currently no affordance to draw an edge from node to node. Fix this. Use recommended React Flow patterns.
+- In preview/export, nodes should still be rendered as discernible cards.
+- Real (=exported) width of nodes should reflect the width of the nodes in edit mode.
