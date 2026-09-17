@@ -1,9 +1,12 @@
 import { createContext, useContext } from 'react';
 import type { AppMode } from '../shared/appMode';
+import type { ImagePosition, NodeImage } from '../shared/flowTypes';
 
 export interface FlowInteraction {
   mode: AppMode;
   updateNodeText: (nodeId: string, text: string) => void;
+  setNodeImage: (nodeId: string, image: NodeImage | null) => void;
+  setNodeImagePosition: (nodeId: string, position: ImagePosition) => void;
   updateEdgeLabel: (edgeId: string, label: string) => void;
   deleteNode: (nodeId: string) => void;
   deleteEdge: (edgeId: string) => void;

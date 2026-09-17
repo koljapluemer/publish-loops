@@ -2,6 +2,7 @@ import { app, BrowserWindow } from 'electron';
 import path from 'node:path';
 import started from 'electron-squirrel-startup';
 import { registerFlowFilesIpc } from './main/flowFilesIpc';
+import { registerFlowImagesIpc } from './main/flowImagesIpc';
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (started) {
@@ -9,6 +10,7 @@ if (started) {
 }
 
 registerFlowFilesIpc();
+registerFlowImagesIpc();
 
 const createWindow = () => {
   // Create the browser window.

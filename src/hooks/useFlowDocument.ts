@@ -7,7 +7,7 @@ import {
   type EdgeChange,
   type NodeChange,
 } from '@xyflow/react';
-import type { FlowChartFile, FlowEdge, FlowNode } from '../shared/flowTypes';
+import type { FlowChartFile, FlowEdge, FlowNode, ImagePosition, NodeImage } from '../shared/flowTypes';
 
 export type PendingUndo =
   | { kind: 'node'; node: FlowNode; edges: FlowEdge[] }
@@ -38,6 +38,8 @@ type FlowDocAction =
   | { type: 'CONNECT'; connection: Connection }
   | { type: 'ADD_NODE'; node: FlowNode }
   | { type: 'UPDATE_NODE_TEXT'; nodeId: string; text: string }
+  | { type: 'SET_NODE_IMAGE'; nodeId: string; image: NodeImage | null }
+  | { type: 'SET_NODE_IMAGE_POSITION'; nodeId: string; position: ImagePosition }
   | { type: 'UPDATE_EDGE_LABEL'; edgeId: string; label: string }
   | { type: 'DELETE_NODE'; nodeId: string }
   | { type: 'DELETE_EDGE'; edgeId: string }
@@ -84,6 +86,29 @@ function reducer(state: FlowDocState, action: FlowDocAction): FlowDocState {
         ...state,
         nodes: state.nodes.map((node) =>
           node.id === action.nodeId ? { ...node, data: { ...node.data, text: action.text } } : node,
+        ),
+      };
+    case 'SET_NODE_IMAGE':
+      return {
+        ...state,
+        nodes: state.nodes.map((node) => {
+          if (node.id !== action.nodeId) return node;
+          const nextData = { ...node.data };
+          if (action.image) {
+            nextData.image = action.image;
+          } else {
+            delete nextData.image;
+          }
+          return { ...node, data: nextData };
+        }),
+      };
+    case 'SET_NODE_IMAGE_POSITION':
+      return {
+        ...state,
+        nodes: state.nodes.map((node) =>
+          node.id === action.nodeId && node.data.image
+            ? { ...node, data: { ...node.data, image: { ...node.data.image, position: action.position } } }
+            : node,
         ),
       };
     case 'UPDATE_EDGE_LABEL':
@@ -209,6 +234,14 @@ export function useFlowDocument(slug: string | null) {
     dispatch({ type: 'UPDATE_NODE_TEXT', nodeId, text });
   }, []);
 
+  const setNodeImage = useCallback((nodeId: string, image: NodeImage | null) => {
+    dispatch({ type: 'SET_NODE_IMAGE', nodeId, image });
+  }, []);
+
+  const setNodeImagePosition = useCallback((nodeId: string, position: ImagePosition) => {
+    dispatch({ type: 'SET_NODE_IMAGE_POSITION', nodeId, position });
+  }, []);
+
   const updateEdgeLabel = useCallback((edgeId: string, label: string) => {
     dispatch({ type: 'UPDATE_EDGE_LABEL', edgeId, label });
   }, []);
@@ -239,6 +272,8 @@ export function useFlowDocument(slug: string | null) {
     onConnect,
     addNode,
     updateNodeText,
+    setNodeImage,
+    setNodeImagePosition,
     updateEdgeLabel,
     deleteNode,
     deleteEdge,

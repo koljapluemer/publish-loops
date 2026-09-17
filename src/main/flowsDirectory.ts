@@ -15,3 +15,13 @@ export async function ensureFlowsDir(): Promise<string> {
   await fs.mkdir(dir, { recursive: true });
   return dir;
 }
+
+export function getImagesDir(): string {
+  return path.join(getFlowsDir(), 'images');
+}
+
+export async function ensureImagesDir(): Promise<string> {
+  const dir = getImagesDir();
+  await fs.mkdir(dir, { recursive: true });
+  return dir;
+}

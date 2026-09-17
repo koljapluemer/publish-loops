@@ -10,6 +10,10 @@ const flowsApi: FlowsApi = {
   read: (slug) => ipcRenderer.invoke(FLOWS_CHANNELS.read, slug),
   save: (slug, flow) => ipcRenderer.invoke(FLOWS_CHANNELS.save, slug, flow),
   create: (name) => ipcRenderer.invoke(FLOWS_CHANNELS.create, name),
+  selectImage: () => ipcRenderer.invoke(FLOWS_CHANNELS.selectImage),
+  saveImageData: (bytes, mimeType) => ipcRenderer.invoke(FLOWS_CHANNELS.saveImageData, bytes, mimeType),
+  readImage: (relativePath) => ipcRenderer.invoke(FLOWS_CHANNELS.readImage, relativePath),
+  deleteImage: (relativePath) => ipcRenderer.invoke(FLOWS_CHANNELS.deleteImage, relativePath),
 };
 
 contextBridge.exposeInMainWorld('flowsApi', flowsApi);

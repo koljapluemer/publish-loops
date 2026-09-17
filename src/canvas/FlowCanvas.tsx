@@ -41,6 +41,8 @@ function FlowCanvas({ slug, mode }: FlowCanvasProps) {
     onConnect,
     addNode,
     updateNodeText,
+    setNodeImage,
+    setNodeImagePosition,
     updateEdgeLabel,
     deleteNode,
     deleteEdge,
@@ -72,7 +74,9 @@ function FlowCanvas({ slug, mode }: FlowCanvasProps) {
   }
 
   return (
-    <FlowInteractionProvider value={{ mode, updateNodeText, updateEdgeLabel, deleteNode, deleteEdge }}>
+    <FlowInteractionProvider
+      value={{ mode, updateNodeText, setNodeImage, setNodeImagePosition, updateEdgeLabel, deleteNode, deleteEdge }}
+    >
       <div className="flow-canvas">
         <ReactFlow
           nodes={state.nodes}

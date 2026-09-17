@@ -226,6 +226,7 @@ body {
   background: #fff;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .text-node--edit {
@@ -246,19 +247,21 @@ body {
 .text-node-header {
   display: flex;
   align-items: center;
-  justify-content: center;
-  padding: 0.2rem;
+  padding: 0.2rem 0.35rem;
   cursor: grab;
   color: #999;
   border-bottom: 1px solid #eee;
-  position: relative;
+  gap: 0.3rem;
 }
 
-.text-node-delete-button {
-  position: absolute;
-  right: 0.2rem;
-  top: 50%;
-  transform: translateY(-50%);
+.text-node-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+  margin-left: auto;
+}
+
+.text-node-icon-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -269,11 +272,68 @@ body {
   color: #999;
   cursor: pointer;
   border-radius: 3px;
+  flex-shrink: 0;
 }
 
-.text-node-delete-button:hover {
+.text-node-icon-button:hover {
+  color: #1a1a1a;
+  background: #f0f0f0;
+}
+
+.text-node-icon-button--danger:hover {
   color: #b3261e;
   background: #fbe9e7;
+}
+
+.text-node-image-position {
+  font-size: 0.65rem;
+  padding: 0.05rem 0.2rem;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  background: #fff;
+  color: #555;
+  cursor: pointer;
+  max-width: 4.5rem;
+}
+
+.text-node-body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.text-node-body--above {
+  flex-direction: column;
+}
+
+.text-node-body--below {
+  flex-direction: column-reverse;
+}
+
+.text-node-body--left {
+  flex-direction: row;
+}
+
+.text-node-body--right {
+  flex-direction: row-reverse;
+}
+
+.text-node-image {
+  display: block;
+  flex-shrink: 0;
+  object-fit: contain;
+}
+
+.text-node-body--above .text-node-image,
+.text-node-body--below .text-node-image {
+  width: 100%;
+  max-height: 120px;
+}
+
+.text-node-body--left .text-node-image,
+.text-node-body--right .text-node-image {
+  max-width: 40%;
+  max-height: 100%;
 }
 
 .text-node-textarea {
@@ -283,8 +343,8 @@ body {
   padding: 0.5rem;
   font-family: inherit;
   font-size: 0.85rem;
-  border-radius: 0 0 6px 6px;
   min-height: 60px;
+  min-width: 0;
 }
 
 .text-node-textarea:focus {
@@ -292,6 +352,8 @@ body {
 }
 
 .text-node-markdown {
+  flex: 1;
+  min-width: 0;
   padding: 0.25rem;
   font-size: 0.9rem;
 }
