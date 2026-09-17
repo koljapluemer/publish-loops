@@ -1,0 +1,42 @@
+{
+  "name": "LaMinLa: basic flow",
+  "nodes": [
+    {
+      "id": "49d1b368-3c34-468a-935f-90ea80a2fbad",
+      "type": "text",
+      "position": {
+        "x": 559.25,
+        "y": 339.2734375
+      },
+      "data": {
+        "text": "prompt learner to memorize a target language phrase"
+      },
+      "dragHandle": ".custom-drag-handle"
+    },
+    {
+      "id": "ca3bb197-88e5-4598-9b9b-695c686d9051",
+      "type": "text",
+      "position": {
+        "x": 851.6344910014265,
+        "y": 331.48554212850865
+      },
+      "data": {
+        "text": "wait 3 seconds"
+      },
+      "dragHandle": ".custom-drag-handle"
+    },
+    {
+      "id": "b5bbd0ca-c230-4495-9ed6-0a09b3db5564",
+      "type": "text",
+      "position": {
+        "x": 614.6344910014265,
+        "y": 514.9855421285087
+      },
+      "data": {
+        "text": "test if learner remembers the phrase with a standard digital flashcard flow"
+      },
+      "dragHandle": ".custom-drag-handle"
+    }
+  ],
+  "edges": []
+}
