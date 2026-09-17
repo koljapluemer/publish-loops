@@ -4,7 +4,7 @@ import type { FlowEdge } from '../shared/flowTypes';
 import { getEdgeParams } from './edgeGeometry';
 import { useFlowInteraction } from './FlowInteractionContext';
 
-function FloatingEdge({ id, source, target, data, style }: EdgeProps<FlowEdge>) {
+function FloatingEdge({ id, source, target, data, style, markerEnd }: EdgeProps<FlowEdge>) {
   const { mode, updateEdgeLabel, deleteEdge } = useFlowInteraction();
   const sourceNode = useInternalNode(source);
   const targetNode = useInternalNode(target);
@@ -29,7 +29,7 @@ function FloatingEdge({ id, source, target, data, style }: EdgeProps<FlowEdge>) 
 
   return (
     <>
-      <BaseEdge id={id} path={path} style={style} />
+      <BaseEdge id={id} path={path} style={style} markerEnd={markerEnd} />
       {showLabel && (
         <EdgeLabelRenderer>
           <div

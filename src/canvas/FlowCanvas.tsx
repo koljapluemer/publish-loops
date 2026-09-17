@@ -1,6 +1,15 @@
 import { useCallback } from 'react';
 import type { MouseEvent as ReactMouseEvent } from 'react';
-import { Background, Controls, ReactFlow, useReactFlow, type EdgeTypes, type NodeTypes } from '@xyflow/react';
+import {
+  Background,
+  Controls,
+  MarkerType,
+  ReactFlow,
+  useReactFlow,
+  type DefaultEdgeOptions,
+  type EdgeTypes,
+  type NodeTypes,
+} from '@xyflow/react';
 import { useFlowDocument } from '../hooks/useFlowDocument';
 import type { AppMode } from '../shared/appMode';
 import AddNodeButton from './AddNodeButton';
@@ -16,6 +25,7 @@ import UndoToast from './UndoToast';
 // drop textarea focus when toggling edit/preview mode).
 const nodeTypes: NodeTypes = { text: TextNode };
 const edgeTypes: EdgeTypes = { floating: FloatingEdge };
+const defaultEdgeOptions: DefaultEdgeOptions = { markerEnd: { type: MarkerType.ArrowClosed } };
 
 interface FlowCanvasProps {
   slug: string;
@@ -73,6 +83,7 @@ function FlowCanvas({ slug, mode }: FlowCanvasProps) {
           onPaneClick={handlePaneDoubleClick}
           nodeTypes={nodeTypes}
           edgeTypes={edgeTypes}
+          defaultEdgeOptions={defaultEdgeOptions}
           connectionLineComponent={FloatingConnectionLine}
           connectionRadius={40}
           nodesDraggable={isEdit}
