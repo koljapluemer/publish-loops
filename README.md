@@ -34,9 +34,18 @@ The CSS that controls how flow charts render in preview images lives in [`src/ex
 ```bash
 npm run typecheck  # TypeScript type-checking
 npm run lint        # ESLint
+npm run site:dev    # serve and watch the static loops website
+npm run site:build  # generate the website in _site/
 npm run package      # package the app (not the primary use case, see below)
 npm run make          # build platform installers (not the primary use case, see below)
 ```
+
+## Static website
+
+The Eleventy website source lives in [`site/`](./site). It reads loop titles
+from `flows/*.json` and pairs them with the exported PNGs in `flow-images/`.
+Templates, reusable components, and styles are kept in separate directories so
+the generated HTML and presentation can be edited independently.
 
 ## Notes
 

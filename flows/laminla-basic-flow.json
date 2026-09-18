@@ -9,7 +9,7 @@
         "y": 177.3984375
       },
       "data": {
-        "text": "### Start\n\nprompt learner to memorize a target language phrase",
+        "text": "prompt learner to memorize a target language phrase",
         "image": {
           "path": "images/834b581d-a90d-48d0-b875-c3fafb76e4b0.png",
           "position": "left"
@@ -48,6 +48,18 @@
         }
       },
       "dragHandle": ".custom-drag-handle"
+    },
+    {
+      "id": "11e03ac7-0025-42b6-9910-dc3575f1cfc2",
+      "type": "text",
+      "position": {
+        "x": 531,
+        "y": 59.7177734375
+      },
+      "data": {
+        "text": "**learner starts session**"
+      },
+      "dragHandle": ".custom-drag-handle"
     }
   ],
   "edges": [
@@ -80,6 +92,15 @@
       "target": "49d1b368-3c34-468a-935f-90ea80a2fbad",
       "data": {
         "label": "load random sentence and go here"
+      }
+    },
+    {
+      "id": "c3e7a150-dd80-4652-ac70-ab67dc6ab008",
+      "type": "floating",
+      "source": "11e03ac7-0025-42b6-9910-dc3575f1cfc2",
+      "target": "49d1b368-3c34-468a-935f-90ea80a2fbad",
+      "data": {
+        "label": ""
       }
     }
   ]

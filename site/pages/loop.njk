@@ -1,0 +1,23 @@
+---
+layout: layouts/base.njk
+pagination:
+  data: loops
+  size: 1
+  alias: loop
+permalink: "loops/{{ loop.slug }}/index.html"
+eleventyComputed:
+  title: "{{ loop.title }}"
+stylesheets:
+  - /assets/css/pages/loop.css
+---
+<article class="loop-page">
+  <header class="page-header">
+    <h1>{{ loop.title }}</h1>
+  </header>
+
+  <img
+    class="loop-page__image"
+    src="{{ loop.imageUrl }}"
+    alt="{{ loop.title }}"
+  >
+</article>

@@ -1,0 +1,48 @@
+:root {
+  color-scheme: light;
+  font-family: system-ui, sans-serif;
+  color: #1f2933;
+  background: #f7f7f5;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+.site-header {
+  padding: 1rem clamp(1rem, 4vw, 3rem);
+  border-bottom: 1px solid #d9ddd8;
+  background: #fff;
+}
+
+.site-title {
+  color: inherit;
+  font-size: 1.125rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.site-main {
+  width: min(90rem, 100%);
+  margin-inline: auto;
+  padding: clamp(1.5rem, 4vw, 3rem);
+}
+
+.page-header {
+  margin-bottom: 2rem;
+}
+
+.page-header h1 {
+  margin: 0;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  line-height: 1.05;
+}

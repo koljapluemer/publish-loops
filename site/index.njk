@@ -1,0 +1,17 @@
+---
+layout: layouts/base.njk
+title: All loops
+stylesheets:
+  - /assets/css/components/loop-card.css
+---
+{% from "components/loop-card.njk" import loopCard %}
+
+<header class="page-header">
+  <h1>All loops</h1>
+</header>
+
+<div class="loop-grid">
+  {% for loop in loops %}
+    {{ loopCard(loop) }}
+  {% endfor %}
+</div>
