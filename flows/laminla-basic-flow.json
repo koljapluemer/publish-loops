@@ -21,8 +21,8 @@
       "id": "ca3bb197-88e5-4598-9b9b-695c686d9051",
       "type": "text",
       "position": {
-        "x": 1046.6344910014263,
-        "y": 394.48554212850865
+        "x": 994.6344910014263,
+        "y": 307.48554212850865
       },
       "data": {
         "text": "wait 3 seconds",
@@ -37,8 +37,8 @@
       "id": "b5bbd0ca-c230-4495-9ed6-0a09b3db5564",
       "type": "text",
       "position": {
-        "x": 584.1344910014265,
-        "y": 559.4855421285087
+        "x": 421.13449100142645,
+        "y": 656.4855421285087
       },
       "data": {
         "text": "test if learner remembers the phrase with a standard digital flashcard/spaced repetition flow",
