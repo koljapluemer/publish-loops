@@ -9,7 +9,7 @@
         "y": 177.3984375
       },
       "data": {
-        "text": "#prompt learner to memorize a target language phrase",
+        "text": "### Start\n\nprompt learner to memorize a target language phrase",
         "image": {
           "path": "images/834b581d-a90d-48d0-b875-c3fafb76e4b0.png",
           "position": "left"
