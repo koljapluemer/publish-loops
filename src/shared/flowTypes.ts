@@ -1,4 +1,4 @@
-import type { Node, Edge } from '@xyflow/react';
+import type { Node, Edge, XYPosition } from '@xyflow/react';
 
 export interface FlowSummary {
   slug: string;
@@ -19,6 +19,7 @@ export interface TextNodeData extends Record<string, unknown> {
 
 export interface FloatingEdgeData extends Record<string, unknown> {
   label: string;
+  labelOffset?: XYPosition;
 }
 
 export type FlowNode = Node<TextNodeData, 'text'>;

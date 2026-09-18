@@ -2,10 +2,10 @@ import { useCallback, useEffect, useReducer, useRef, useState } from 'react';
 import {
   applyEdgeChanges,
   applyNodeChanges,
-  addEdge,
   type Connection,
   type EdgeChange,
   type NodeChange,
+  type XYPosition,
 } from '@xyflow/react';
 import type { FlowChartFile, FlowEdge, FlowNode, ImagePosition, NodeImage } from '../shared/flowTypes';
 
@@ -35,12 +35,13 @@ type FlowDocAction =
   | { type: 'RESET' }
   | { type: 'APPLY_NODE_CHANGES'; changes: NodeChange<FlowNode>[] }
   | { type: 'APPLY_EDGE_CHANGES'; changes: EdgeChange<FlowEdge>[] }
-  | { type: 'CONNECT'; connection: Connection }
+  | { type: 'CONNECT'; edge: FlowEdge }
   | { type: 'ADD_NODE'; node: FlowNode }
   | { type: 'UPDATE_NODE_TEXT'; nodeId: string; text: string }
   | { type: 'SET_NODE_IMAGE'; nodeId: string; image: NodeImage | null }
   | { type: 'SET_NODE_IMAGE_POSITION'; nodeId: string; position: ImagePosition }
   | { type: 'UPDATE_EDGE_LABEL'; edgeId: string; label: string }
+  | { type: 'UPDATE_EDGE_LABEL_POSITION'; edgeId: string; offset: XYPosition | null }
   | { type: 'DELETE_NODE'; nodeId: string }
   | { type: 'DELETE_EDGE'; edgeId: string }
   | { type: 'UNDO_DELETE' }
@@ -77,7 +78,10 @@ function reducer(state: FlowDocState, action: FlowDocAction): FlowDocState {
     case 'CONNECT':
       return {
         ...state,
-        edges: addEdge<FlowEdge>({ ...action.connection, type: 'floating', data: { label: '' } }, state.edges),
+        // React Flow's addEdge helper deliberately rejects another edge with
+        // the same endpoints. State charts need parallel transitions, so add
+        // an explicitly identified edge without that de-duplication.
+        edges: [...state.edges, action.edge],
       };
     case 'ADD_NODE':
       return { ...state, nodes: [...state.nodes, action.node] };
@@ -117,6 +121,20 @@ function reducer(state: FlowDocState, action: FlowDocAction): FlowDocState {
         edges: state.edges.map((edge) =>
           edge.id === action.edgeId ? { ...edge, data: { ...edge.data, label: action.label } } : edge,
         ),
+      };
+    case 'UPDATE_EDGE_LABEL_POSITION':
+      return {
+        ...state,
+        edges: state.edges.map((edge) => {
+          if (edge.id !== action.edgeId) return edge;
+          const nextData = { ...edge.data };
+          if (action.offset) {
+            nextData.labelOffset = action.offset;
+          } else {
+            delete nextData.labelOffset;
+          }
+          return { ...edge, data: nextData };
+        }),
       };
     case 'DELETE_NODE': {
       const node = state.nodes.find((candidate) => candidate.id === action.nodeId);
@@ -223,7 +241,15 @@ export function useFlowDocument(slug: string | null) {
   }, []);
 
   const onConnect = useCallback((connection: Connection) => {
-    dispatch({ type: 'CONNECT', connection });
+    dispatch({
+      type: 'CONNECT',
+      edge: {
+        ...connection,
+        id: crypto.randomUUID(),
+        type: 'floating',
+        data: { label: '' },
+      },
+    });
   }, []);
 
   const addNode = useCallback((node: FlowNode) => {
@@ -244,6 +270,10 @@ export function useFlowDocument(slug: string | null) {
 
   const updateEdgeLabel = useCallback((edgeId: string, label: string) => {
     dispatch({ type: 'UPDATE_EDGE_LABEL', edgeId, label });
+  }, []);
+
+  const updateEdgeLabelPosition = useCallback((edgeId: string, offset: XYPosition | null) => {
+    dispatch({ type: 'UPDATE_EDGE_LABEL_POSITION', edgeId, offset });
   }, []);
 
   const deleteNode = useCallback((nodeId: string) => {
@@ -275,6 +305,7 @@ export function useFlowDocument(slug: string | null) {
     setNodeImage,
     setNodeImagePosition,
     updateEdgeLabel,
+    updateEdgeLabelPosition,
     deleteNode,
     deleteEdge,
     pendingUndo,

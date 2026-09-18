@@ -57,7 +57,11 @@
       "source": "49d1b368-3c34-468a-935f-90ea80a2fbad",
       "target": "ca3bb197-88e5-4598-9b9b-695c686d9051",
       "data": {
-        "label": "when ready"
+        "label": "when ready",
+        "labelOffset": {
+          "x": -8.53990175071317,
+          "y": -18.305240546676202
+        }
       }
     },
     {

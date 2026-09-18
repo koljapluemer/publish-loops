@@ -5,8 +5,8 @@
       "id": "6d86d1b8-79ea-4a9d-89b6-eedd00420645",
       "type": "text",
       "position": {
-        "x": 394,
-        "y": 321.2734375
+        "x": 274,
+        "y": 335.2734375
       },
       "data": {
         "text": "learner finds target language videos interesting to them, using platform affordances (search, subscriptions, frontpage, ...)"
@@ -17,11 +17,15 @@
       "id": "27b209c1-9f9f-48f9-9d9b-d3e7633da55a",
       "type": "text",
       "position": {
-        "x": 895,
-        "y": 448.2734375
+        "x": 892,
+        "y": 337.2734375
       },
       "data": {
-        "text": "while watching the video, pills with translations of *some* of the vocabulary being used right now are overlaid "
+        "text": "while watching the video, pills with translations of *some* of the vocabulary being used right now are overlaid ",
+        "image": {
+          "path": "images/ebcb5b40-9a3a-478f-9167-13ca78b5f19d.png",
+          "position": "above"
+        }
       },
       "dragHandle": ".custom-drag-handle"
     }
@@ -33,7 +37,24 @@
       "source": "6d86d1b8-79ea-4a9d-89b6-eedd00420645",
       "target": "27b209c1-9f9f-48f9-9d9b-d3e7633da55a",
       "data": {
-        "label": "once videos is chosen"
+        "label": "once videos is chosen",
+        "labelOffset": {
+          "x": 9.9609375,
+          "y": -66.11328125
+        }
+      }
+    },
+    {
+      "id": "da3644c2-18de-4d77-9503-c83b8cc0e020",
+      "type": "floating",
+      "source": "27b209c1-9f9f-48f9-9d9b-d3e7633da55a",
+      "target": "6d86d1b8-79ea-4a9d-89b6-eedd00420645",
+      "data": {
+        "label": "when video is over/learner wants to watch something else",
+        "labelOffset": {
+          "x": -22.1640625,
+          "y": 64.44140625
+        }
       }
     }
   ]

@@ -45,6 +45,7 @@ function FlowCanvas({ slug, mode }: FlowCanvasProps) {
     setNodeImage,
     setNodeImagePosition,
     updateEdgeLabel,
+    updateEdgeLabelPosition,
     deleteNode,
     deleteEdge,
     pendingUndo,
@@ -69,8 +70,8 @@ function FlowCanvas({ slug, mode }: FlowCanvasProps) {
   // Kept referentially stable so that editing one node/edge doesn't force
   // every other node/edge on the canvas to re-render along with it.
   const interaction = useMemo(
-    () => ({ mode, updateNodeText, setNodeImage, setNodeImagePosition, updateEdgeLabel, deleteNode, deleteEdge }),
-    [mode, updateNodeText, setNodeImage, setNodeImagePosition, updateEdgeLabel, deleteNode, deleteEdge],
+    () => ({ mode, updateNodeText, setNodeImage, setNodeImagePosition, updateEdgeLabel, updateEdgeLabelPosition, deleteNode, deleteEdge }),
+    [mode, updateNodeText, setNodeImage, setNodeImagePosition, updateEdgeLabel, updateEdgeLabelPosition, deleteNode, deleteEdge],
   );
 
   if (state.status === 'idle' || state.status === 'loading') {

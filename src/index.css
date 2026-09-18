@@ -306,6 +306,31 @@ body {
   gap: 0.2rem;
 }
 
+.edge-label-drag-handle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.3rem;
+  height: 1.3rem;
+  padding: 0;
+  border: 1px solid #ccc;
+  background: #fff;
+  color: #999;
+  cursor: grab;
+  border-radius: 3px;
+  flex-shrink: 0;
+  touch-action: none;
+}
+
+.edge-label-drag-handle:hover {
+  color: #1a1a1a;
+  background: #f0f0f0;
+}
+
+.edge-label-drag-handle:active {
+  cursor: grabbing;
+}
+
 .edge-label input {
   font-size: 0.75rem;
   padding: 0.15rem 0.35rem;
