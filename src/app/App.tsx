@@ -15,9 +15,6 @@ export function App() {
   const activeSlug =
     selectedSlug ?? (listState.status === 'ready' ? (listState.flows[0]?.slug ?? null) : null);
 
-  const activeFlowName =
-    listState.status === 'ready' ? (listState.flows.find((flow) => flow.slug === activeSlug)?.name ?? null) : null;
-
   const handleCreateFlow = async (name: string) => {
     const flow = await createFlow(name);
     setSelectedSlug(flow.slug);
@@ -29,7 +26,6 @@ export function App() {
         <Toolbar
           listState={listState}
           activeSlug={activeSlug}
-          activeFlowName={activeFlowName}
           mode={mode}
           onSelectFlow={setSelectedSlug}
           onCreateFlow={handleCreateFlow}

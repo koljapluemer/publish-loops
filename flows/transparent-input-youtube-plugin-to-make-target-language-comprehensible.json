@@ -1,0 +1,40 @@
+{
+  "name": "transparent-input: YouTube plugin to make target language comprehensible",
+  "nodes": [
+    {
+      "id": "6d86d1b8-79ea-4a9d-89b6-eedd00420645",
+      "type": "text",
+      "position": {
+        "x": 394,
+        "y": 321.2734375
+      },
+      "data": {
+        "text": "learner finds target language videos interesting to them, using platform affordances (search, subscriptions, frontpage, ...)"
+      },
+      "dragHandle": ".custom-drag-handle"
+    },
+    {
+      "id": "27b209c1-9f9f-48f9-9d9b-d3e7633da55a",
+      "type": "text",
+      "position": {
+        "x": 895,
+        "y": 448.2734375
+      },
+      "data": {
+        "text": "while watching the video, pills with translations of *some* of the vocabulary being used right now are overlaid "
+      },
+      "dragHandle": ".custom-drag-handle"
+    }
+  ],
+  "edges": [
+    {
+      "id": "xy-edge__6d86d1b8-79ea-4a9d-89b6-eedd00420645-27b209c1-9f9f-48f9-9d9b-d3e7633da55a",
+      "type": "floating",
+      "source": "6d86d1b8-79ea-4a9d-89b6-eedd00420645",
+      "target": "27b209c1-9f9f-48f9-9d9b-d3e7633da55a",
+      "data": {
+        "label": "once videos is chosen"
+      }
+    }
+  ]
+}

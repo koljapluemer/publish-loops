@@ -2,7 +2,7 @@ import { ipcMain, dialog, BrowserWindow } from 'electron';
 import path from 'node:path';
 import fs from 'node:fs/promises';
 import crypto from 'node:crypto';
-import { ensureImagesDir, getImagesDir } from './flowsDirectory';
+import { ensureImagesDir, ensurePreviewImagesDir, getImagesDir, getPreviewImagesDir } from './flowsDirectory';
 import { FLOWS_CHANNELS } from '../shared/flowsApi';
 
 const EXTENSION_BY_MIME: Record<string, string> = {
@@ -21,6 +21,7 @@ const MIME_BY_EXTENSION: Record<string, string> = Object.fromEntries(
 const DIALOG_EXTENSIONS = Object.values(EXTENSION_BY_MIME);
 
 const SAFE_IMAGE_FILENAME_PATTERN = /^[a-z0-9-]+\.(png|jpe?g|gif|webp|bmp|svg)$/i;
+const SAFE_SLUG_PATTERN = /^[a-z0-9-]+$/;
 
 function toRelativePath(filename: string): string {
   return path.posix.join('images', filename);
@@ -84,5 +85,27 @@ export function registerFlowImagesIpc(): void {
   ipcMain.handle(FLOWS_CHANNELS.deleteImage, async (_event, relativePath: string): Promise<void> => {
     const filePath = resolveImagePath(relativePath);
     await fs.rm(filePath, { force: true });
+  });
+
+  ipcMain.handle(FLOWS_CHANNELS.savePreviewImage, async (_event, slug: string, bytes: ArrayBuffer): Promise<void> => {
+    if (!SAFE_SLUG_PATTERN.test(slug)) {
+      throw new Error(`Invalid flow slug: "${slug}"`);
+    }
+
+    await ensurePreviewImagesDir();
+    const filePath = path.join(getPreviewImagesDir(), `${slug}.png`);
+    const nextBytes = Buffer.from(bytes);
+
+    // Avoid touching the file (and creating noisy repo changes) when the
+    // rasterized preview is byte-for-byte identical to the existing PNG.
+    try {
+      const currentBytes = await fs.readFile(filePath);
+      if (currentBytes.equals(nextBytes)) return;
+    } catch (error) {
+      const code = (error as NodeJS.ErrnoException).code;
+      if (code !== 'ENOENT') throw error;
+    }
+
+    await fs.writeFile(filePath, nextBytes);
   });
 }

@@ -1,6 +1,6 @@
 # loop-manager
 
-A personal, single-screen Electron app for building flow charts and exporting them as images.
+A personal, single-screen Electron app for building flow charts with automatically generated image previews.
 
 Each flow chart is a JSON file stored in the [`flows/`](./flows) folder (created automatically on first run) — that folder is the source of truth, not any in-app database.
 
@@ -21,14 +21,13 @@ This runs the app in dev mode via Electron Forge, which is the only supported wa
 
 - **Top toolbar**: pick a flow chart from the dropdown, or click the `+` icon to create a new one (just give it a name).
 - **Edit mode**: drag nodes by their grip handle, type node text in the textarea, drag from a node's edge to another node to connect them, and click an edge to edit its label. Click the `+` button on the canvas to add a new node.
-- **Preview mode**: a minimal, chrome-free view where node text renders as Markdown — this is what gets exported.
-- **Export button**: available in preview mode, exports the current canvas to a PNG.
+- **Preview mode**: a minimal, chrome-free view where node text renders as Markdown. Opening it automatically writes a PNG to `flow-images/<flow-slug>.png` in the background.
 
 Changes autosave to disk a short moment after you stop editing — there's no save button.
 
-## Export styling
+## Preview image styling
 
-The CSS that controls how flow charts render in preview/export lives in [`src/export-flow.css`](./src/export-flow.css). Edit that file to change exported node cards, Markdown text, images, edge paths, and edge labels.
+The CSS that controls how flow charts render in preview images lives in [`src/export-flow.css`](./src/export-flow.css). Edit that file to change rendered node cards, Markdown text, images, edge paths, and edge labels.
 
 ## Other scripts
 

@@ -9,6 +9,7 @@ export const FLOWS_CHANNELS = {
   saveImageData: 'flows:saveImageData',
   readImage: 'flows:readImage',
   deleteImage: 'flows:deleteImage',
+  savePreviewImage: 'flows:savePreviewImage',
 } as const;
 
 export interface FlowsApi {
@@ -23,4 +24,6 @@ export interface FlowsApi {
   /** Reads an image by its relative path and returns it as a data URL. */
   readImage(relativePath: string): Promise<string>;
   deleteImage(relativePath: string): Promise<void>;
+  /** Writes the rendered flow preview to the sibling flow-images directory. */
+  savePreviewImage(slug: string, bytes: ArrayBuffer): Promise<void>;
 }

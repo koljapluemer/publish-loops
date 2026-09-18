@@ -1,6 +1,5 @@
 import type { FlowListState } from '../hooks/useFlowList';
 import type { AppMode } from '../shared/appMode';
-import ExportButton from './ExportButton';
 import FlowSelector from './FlowSelector';
 import ModeToggle from './ModeToggle';
 import NewFlowButton from './NewFlowButton';
@@ -8,7 +7,6 @@ import NewFlowButton from './NewFlowButton';
 interface ToolbarProps {
   listState: FlowListState;
   activeSlug: string | null;
-  activeFlowName: string | null;
   mode: AppMode;
   onSelectFlow: (slug: string) => void;
   onCreateFlow: (name: string) => Promise<void>;
@@ -18,7 +16,6 @@ interface ToolbarProps {
 function Toolbar({
   listState,
   activeSlug,
-  activeFlowName,
   mode,
   onSelectFlow,
   onCreateFlow,
@@ -30,7 +27,6 @@ function Toolbar({
       <NewFlowButton onCreate={onCreateFlow} />
       <div className="toolbar-spacer" />
       <ModeToggle mode={mode} onChange={onModeChange} />
-      <ExportButton mode={mode} flowName={activeFlowName} />
     </div>
   );
 }

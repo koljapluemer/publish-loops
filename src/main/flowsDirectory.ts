@@ -25,3 +25,13 @@ export async function ensureImagesDir(): Promise<string> {
   await fs.mkdir(dir, { recursive: true });
   return dir;
 }
+
+export function getPreviewImagesDir(): string {
+  return path.join(app.getAppPath(), 'flow-images');
+}
+
+export async function ensurePreviewImagesDir(): Promise<string> {
+  const dir = getPreviewImagesDir();
+  await fs.mkdir(dir, { recursive: true });
+  return dir;
+}

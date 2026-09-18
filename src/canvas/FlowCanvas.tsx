@@ -13,6 +13,7 @@ import {
 import { useFlowDocument } from '../hooks/useFlowDocument';
 import type { AppMode } from '../shared/appMode';
 import AddNodeButton from './AddNodeButton';
+import AutoSavePreview from './AutoSavePreview';
 import { createTextNode } from './createTextNode';
 import { FlowInteractionProvider } from './FlowInteractionContext';
 import FloatingConnectionLine from './FloatingConnectionLine';
@@ -105,6 +106,7 @@ function FlowCanvas({ slug, mode }: FlowCanvasProps) {
           {isEdit && <Background />}
           {isEdit && <Controls />}
         </ReactFlow>
+        <AutoSavePreview mode={mode} slug={slug} />
         {isEdit && <AddNodeButton onAdd={addNode} />}
         <div className="top-right-stack">
           {saveStatus === 'saving' && <div className="save-status">Saving…</div>}

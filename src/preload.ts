@@ -14,6 +14,7 @@ const flowsApi: FlowsApi = {
   saveImageData: (bytes, mimeType) => ipcRenderer.invoke(FLOWS_CHANNELS.saveImageData, bytes, mimeType),
   readImage: (relativePath) => ipcRenderer.invoke(FLOWS_CHANNELS.readImage, relativePath),
   deleteImage: (relativePath) => ipcRenderer.invoke(FLOWS_CHANNELS.deleteImage, relativePath),
+  savePreviewImage: (slug, bytes) => ipcRenderer.invoke(FLOWS_CHANNELS.savePreviewImage, slug, bytes),
 };
 
 contextBridge.exposeInMainWorld('flowsApi', flowsApi);
