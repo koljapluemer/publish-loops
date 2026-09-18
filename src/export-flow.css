@@ -4,7 +4,7 @@
    These styles control how the preview canvas is rasterized by the PNG export. */
 
 .flow-canvas {
-  --flow-export-edge-color: #111;
+  --flow-export-edge-color: #333;
   --flow-export-edge-width: 2;
   --xy-edge-stroke: var(--flow-export-edge-color);
   --xy-edge-stroke-width: var(--flow-export-edge-width);
@@ -13,8 +13,7 @@
 .text-node {
   width: 220px;
   min-height: 60px;
-  border: 1px solid #111;
-  border-radius: 6px;
+  border: 1.5px solid #333;
   background: #fff;
   display: flex;
   flex-direction: column;
@@ -87,9 +86,7 @@
 
 .edge-label {
   font-family: 'Roboto Condensed', 'Arial Narrow', Arial, sans-serif;
-  border: 1.5px solid #111;
-  box-sizing: border-box;
-  border-radius: 6px;
+  border: 1.5px solid #333;
   background: #fff;
 
 }
