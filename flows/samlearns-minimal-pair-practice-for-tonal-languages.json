@@ -21,14 +21,14 @@
       "id": "98858503-d3ac-41d2-984a-96c0a5777562",
       "type": "text",
       "position": {
-        "x": 893,
-        "y": 429.2734375
+        "x": 912.1569025618205,
+        "y": 185.70710492828084
       },
       "data": {
         "text": "when clicked, incorrect option is disabled, to enforce that the learner clicks the correct option afterwards and thus builds a stronger, valid association",
         "image": {
-          "path": "images/df33258f-4788-400c-98e5-db1ab710876e.png",
-          "position": "right"
+          "path": "images/6c5fe57b-0f73-4bc4-ba8e-ae986b03058c.png",
+          "position": "above"
         }
       },
       "dragHandle": ".custom-drag-handle"
@@ -37,8 +37,8 @@
       "id": "2553e5e2-155f-4269-8768-49713dcdff73",
       "type": "text",
       "position": {
-        "x": 717,
-        "y": 658.2734375
+        "x": 788.1542095153337,
+        "y": 593.9609788996022
       },
       "data": {
         "text": "correct option flashes green briefly"
@@ -49,11 +49,15 @@
       "id": "7e4f6f35-4ee6-4a42-a03d-25b47f860ad4",
       "type": "text",
       "position": {
-        "x": 250,
-        "y": 743.2734375
+        "x": 388.6247136171091,
+        "y": 577.8802737705895
       },
       "data": {
-        "text": "new target language sample is chosen (may be random, or according to a learning algorithm tracking e.g. Bayesian success rate of distinguishing tone A from tone B) *[image: matrix showing Bayesian tracking of Vietnamese tones]*"
+        "text": "new target language sample is chosen (may be random, or according to a learning algorithm tracking e.g. Bayesian success rate of distinguishing tone A from tone B) \n\n\n*[image: heatmap visualization of my confusion rates of Vietnamese tones September 2026]*",
+        "image": {
+          "path": "images/2f1efc1b-81de-4557-8980-f7d063136557.png",
+          "position": "below"
+        }
       },
       "dragHandle": ".custom-drag-handle"
     },
@@ -65,7 +69,7 @@
         "y": 204.2734375
       },
       "data": {
-        "text": "learner starts interaction"
+        "text": "→ learner starts interaction"
       },
       "dragHandle": ".custom-drag-handle"
     }
