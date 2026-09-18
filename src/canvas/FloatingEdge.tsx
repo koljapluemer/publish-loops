@@ -6,6 +6,28 @@ import { useEditableValue } from '../hooks/useEditableValue';
 import { getEdgeParams } from './edgeGeometry';
 import { useFlowInteraction } from './FlowInteractionContext';
 
+function getOutwardDirection(position: Position) {
+  switch (position) {
+    case Position.Left:
+      return { x: -1, y: 0 };
+    case Position.Right:
+      return { x: 1, y: 0 };
+    case Position.Top:
+      return { x: 0, y: -1 };
+    case Position.Bottom:
+      return { x: 0, y: 1 };
+  }
+}
+
+function normalize(x: number, y: number) {
+  const length = Math.hypot(x, y) || 1;
+  return { x: x / length, y: y / length };
+}
+
+function controlLength(distance: number) {
+  return Math.min(90, Math.max(18, distance / 3));
+}
+
 function offsetEndpoint(
   node: InternalNode,
   position: Position,
@@ -90,22 +112,56 @@ function FloatingEdge({ id, source, target, data, style, markerEnd }: EdgeProps<
   );
   const { x: sx, y: sy } = sourcePoint;
   const { x: tx, y: ty } = targetPoint;
-  const dx = tx - sx;
-  const dy = ty - sy;
-  const distance = Math.hypot(dx, dy) || 1;
   const baseMidpointX = (edgeParams.sx + edgeParams.tx) / 2;
   const baseMidpointY = (edgeParams.sy + edgeParams.ty) / 2;
   const manualLabelX = baseMidpointX + (data?.labelOffset?.x ?? 0);
   const manualLabelY = baseMidpointY + (data?.labelOffset?.y ?? 0);
-  const controlX = data?.labelOffset
-    ? 2 * manualLabelX - (sx + tx) / 2
-    : (sx + tx) / 2 + (-dy / distance) * curveOffset;
-  const controlY = data?.labelOffset
-    ? 2 * manualLabelY - (sy + ty) / 2
-    : (sy + ty) / 2 + (dx / distance) * curveOffset;
-  const path = `M ${sx},${sy} Q ${controlX},${controlY} ${tx},${ty}`;
-  const labelX = (sx + 2 * controlX + tx) / 4;
-  const labelY = (sy + 2 * controlY + ty) / 4;
+  const endpointDx = tx - sx;
+  const endpointDy = ty - sy;
+  const endpointDistance = Math.hypot(endpointDx, endpointDy) || 1;
+  const labelX = data?.labelOffset
+    ? manualLabelX
+    : (sx + tx) / 2 + (-endpointDy / endpointDistance) * curveOffset * 0.5;
+  const labelY = data?.labelOffset
+    ? manualLabelY
+    : (sy + ty) / 2 + (endpointDx / endpointDistance) * curveOffset * 0.5;
+
+  const sourceToLabel = normalize(labelX - sx, labelY - sy);
+  const labelToTarget = normalize(tx - labelX, ty - labelY);
+  const chordDirection = normalize(endpointDx, endpointDy);
+  const tangentSumX = sourceToLabel.x + labelToTarget.x;
+  const tangentSumY = sourceToLabel.y + labelToTarget.y;
+  const midpointTangent = Math.hypot(tangentSumX, tangentSumY) > 0.001
+    ? normalize(tangentSumX, tangentSumY)
+    : chordDirection;
+  const sourceDirection = getOutwardDirection(edgeParams.sourcePos);
+  const targetDirection = getOutwardDirection(edgeParams.targetPos);
+  const sourceDistance = Math.hypot(labelX - sx, labelY - sy);
+  const targetDistance = Math.hypot(tx - labelX, ty - labelY);
+  const sourceControlLength = controlLength(sourceDistance);
+  const targetControlLength = controlLength(targetDistance);
+
+  const sourceControl = {
+    x: sx + sourceDirection.x * sourceControlLength,
+    y: sy + sourceDirection.y * sourceControlLength,
+  };
+  const labelIncomingControl = {
+    x: labelX - midpointTangent.x * sourceControlLength,
+    y: labelY - midpointTangent.y * sourceControlLength,
+  };
+  const labelOutgoingControl = {
+    x: labelX + midpointTangent.x * targetControlLength,
+    y: labelY + midpointTangent.y * targetControlLength,
+  };
+  const targetControl = {
+    x: tx + targetDirection.x * targetControlLength,
+    y: ty + targetDirection.y * targetControlLength,
+  };
+  const path = [
+    `M ${sx},${sy}`,
+    `C ${sourceControl.x},${sourceControl.y} ${labelIncomingControl.x},${labelIncomingControl.y} ${labelX},${labelY}`,
+    `C ${labelOutgoingControl.x},${labelOutgoingControl.y} ${targetControl.x},${targetControl.y} ${tx},${ty}`,
+  ].join(' ');
 
   const handleLabelDrag = (event: ReactPointerEvent<HTMLButtonElement>) => {
     if (event.buttons !== 1) return;
