@@ -1,0 +1,95 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;600;700&display=swap');
+
+/* Export flow rendering
+   These styles control how the preview canvas is rasterized by the PNG export. */
+
+.flow-canvas {
+  --flow-export-edge-color: #111;
+  --flow-export-edge-width: 4;
+  --xy-edge-stroke: var(--flow-export-edge-color);
+  --xy-edge-stroke-width: var(--flow-export-edge-width);
+}
+
+.text-node {
+  width: 220px;
+  min-height: 60px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  color: #111;
+
+  font-family: 'Roboto Condensed', 'Arial Narrow', Arial, sans-serif;
+}
+
+.text-node--preview {
+  min-height: auto;
+}
+
+.text-node-body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.text-node-body--above {
+  flex-direction: column;
+}
+
+.text-node-body--below {
+  flex-direction: column-reverse;
+}
+
+.text-node-body--left {
+  flex-direction: row;
+}
+
+.text-node-body--right {
+  flex-direction: row-reverse;
+}
+
+.text-node-image {
+  display: block;
+  flex-shrink: 0;
+  object-fit: contain;
+}
+
+.text-node-body--above .text-node-image,
+.text-node-body--below .text-node-image {
+  width: 100%;
+  max-height: 120px;
+}
+
+.text-node-body--left .text-node-image,
+.text-node-body--right .text-node-image {
+  max-width: 40%;
+  max-height: 100%;
+}
+
+.text-node-markdown {
+  flex: 1;
+  min-width: 0;
+  padding: 8px;
+  font-size: 0.9rem;
+}
+
+.text-node-markdown :first-child {
+  margin-top: 0;
+}
+
+.text-node-markdown :last-child {
+  margin-bottom: 0;
+}
+
+.edge-label {
+  font-family: 'Roboto Condensed', 'Arial Narrow', Arial, sans-serif;
+}
+
+.edge-label span {
+  font-size: 0.75rem;
+  background: #fff;
+  padding: 0.1rem 0.35rem;
+  border-radius: 3px;
+}

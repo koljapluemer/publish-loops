@@ -26,6 +26,10 @@ This runs the app in dev mode via Electron Forge, which is the only supported wa
 
 Changes autosave to disk a short moment after you stop editing — there's no save button.
 
+## Export styling
+
+The CSS that controls how flow charts render in preview/export lives in [`src/export-flow.css`](./src/export-flow.css). Edit that file to change exported node cards, Markdown text, images, edge paths, and edge labels.
+
 ## Other scripts
 
 ```bash

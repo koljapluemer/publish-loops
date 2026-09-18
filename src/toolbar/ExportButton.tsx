@@ -29,6 +29,8 @@ function ExportButton({ mode, flowName }: ExportButtonProps) {
       return;
     }
 
+    await document.fonts.ready;
+
     const bounds = getNodesBounds(getNodes());
     const viewport = getViewportForBounds(bounds, EXPORT_WIDTH, EXPORT_HEIGHT, MIN_ZOOM, MAX_ZOOM, 0.1);
 

@@ -95,6 +95,7 @@ function FlowCanvas({ slug, mode }: FlowCanvasProps) {
           defaultEdgeOptions={defaultEdgeOptions}
           connectionLineComponent={FloatingConnectionLine}
           connectionRadius={40}
+          defaultMarkerColor={null}
           nodesDraggable={isEdit}
           nodesConnectable={isEdit}
           elementsSelectable={isEdit}

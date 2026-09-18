@@ -28,7 +28,7 @@
         "text": "wait 3 seconds",
         "image": {
           "path": "images/98a2ecf5-f4a9-4945-b956-e4e321fe16ae.png",
-          "position": "right"
+          "position": "below"
         }
       },
       "dragHandle": ".custom-drag-handle"
