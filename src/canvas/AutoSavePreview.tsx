@@ -1,12 +1,8 @@
 import { useEffect } from 'react';
-import { getNodesBounds, getViewportForBounds, useReactFlow } from '@xyflow/react';
-import { toBlob } from 'html-to-image';
+import { getNodesBounds, useReactFlow } from '@xyflow/react';
 import type { AppMode } from '../shared/appMode';
-
-const EXPORT_WIDTH = 1920;
-const EXPORT_HEIGHT = 1080;
-const MIN_ZOOM = 0.5;
-const MAX_ZOOM = 2;
+import { computePreviewExportLayout } from './previewExportLayout';
+import { renderFlowToWebp } from './renderFlowToWebp';
 
 function nextPaint(): Promise<void> {
   return new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve())));
@@ -22,7 +18,7 @@ interface AutoSavePreviewProps {
   slug: string;
 }
 
-/** Writes a PNG in the background each time this flow enters preview mode. */
+/** Writes a square, transparent WebP in the background each time this flow enters preview mode. */
 function AutoSavePreview({ mode, slug }: AutoSavePreviewProps): null {
   const { getNodes } = useReactFlow();
 
@@ -42,20 +38,10 @@ function AutoSavePreview({ mode, slug }: AutoSavePreviewProps): null {
       await waitForImages(viewportElement);
       if (cancelled) return;
 
-      const bounds = getNodesBounds(getNodes());
-      const viewport = getViewportForBounds(bounds, EXPORT_WIDTH, EXPORT_HEIGHT, MIN_ZOOM, MAX_ZOOM, 0.1);
-      const blob = await toBlob(viewportElement, {
-        backgroundColor: '#ffffff',
-        width: EXPORT_WIDTH,
-        height: EXPORT_HEIGHT,
-        style: {
-          width: `${EXPORT_WIDTH}`,
-          height: `${EXPORT_HEIGHT}`,
-          transform: `translate(${viewport.x}px, ${viewport.y}px) scale(${viewport.zoom})`,
-        },
-      });
+      const layout = computePreviewExportLayout(getNodesBounds(getNodes()));
+      const blob = await renderFlowToWebp(viewportElement, layout);
 
-      if (!blob || cancelled) return;
+      if (cancelled) return;
       await window.flowsApi.savePreviewImage(slug, await blob.arrayBuffer());
     };
 

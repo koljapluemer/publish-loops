@@ -23,7 +23,7 @@ This runs the app in dev mode via Electron Forge, which is the only supported wa
 
 - **Top toolbar**: pick a flow chart from the dropdown, or click the `+` icon to create a new one (just give it a name).
 - **Edit mode**: drag nodes by their grip handle, type node text in the textarea, drag from a node's edge to another node to connect them, and click an edge to edit its label. Click the `+` button on the canvas to add a new node.
-- **Preview mode**: a minimal, chrome-free view where node text renders as Markdown. Opening it automatically writes a PNG to `<basePath>/flow-images/<flow-slug>.png` in the background.
+- **Preview mode**: a minimal, chrome-free view where node text renders as Markdown. Opening it automatically writes a square, transparent WebP (1080–4096 px, fit to the flow) to `<basePath>/flow-images/<flow-slug>.webp` in the background.
 
 Changes autosave to disk a short moment after you stop editing — there's no save button.
 
@@ -46,7 +46,7 @@ Toggle **Published** in edit mode to mark a flow for the website. This repo does
 HTML; the koljasam.com static site generator reads the data directly:
 
 - `<basePath>/flows/<slug>.json`: `name`, `published`, nodes, edges
-- `<basePath>/flow-images/<slug>.png`: the preview image (written when a flow is opened in preview mode)
+- `<basePath>/flow-images/<slug>.webp`: the preview image (written when a flow is opened in preview mode)
 
 ## Notes
 

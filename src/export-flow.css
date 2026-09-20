@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;600;700&display=swap');
 
 /* Export flow rendering
-   These styles control how the preview canvas is rasterized by the PNG export. */
+   These styles control how the preview canvas is rasterized by the WebP export. */
 
 .flow-canvas {
   --flow-export-edge-color: #333;

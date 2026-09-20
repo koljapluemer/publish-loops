@@ -93,19 +93,19 @@ export function registerFlowImagesIpc(): void {
     }
 
     await ensurePreviewImagesDir();
-    const filePath = path.join(getPreviewImagesDir(), `${slug}.png`);
+    const previewDir = getPreviewImagesDir();
+    const filePath = path.join(previewDir, `${slug}.webp`);
     const nextBytes = Buffer.from(bytes);
 
     // Avoid touching the file (and creating noisy repo changes) when the
-    // rasterized preview is byte-for-byte identical to the existing PNG.
-    try {
-      const currentBytes = await fs.readFile(filePath);
-      if (currentBytes.equals(nextBytes)) return;
-    } catch (error) {
-      const code = (error as NodeJS.ErrnoException).code;
-      if (code !== 'ENOENT') throw error;
-    }
+    // rasterized preview is byte-for-byte identical to the existing WebP.
+    const currentBytes = await fs.readFile(filePath).catch((error: NodeJS.ErrnoException): null => {
+      if (error.code !== 'ENOENT') throw error;
+      return null;
+    });
+    if (!currentBytes?.equals(nextBytes)) await fs.writeFile(filePath, nextBytes);
 
-    await fs.writeFile(filePath, nextBytes);
+    // Previews used to be PNGs; drop the stale one so it isn't published.
+    await fs.rm(path.join(previewDir, `${slug}.png`), { force: true });
   });
 }
