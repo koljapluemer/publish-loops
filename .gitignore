@@ -91,6 +91,3 @@ typings/
 
 # Electron-Forge
 out/
-
-# Eleventy
-_site/

@@ -45,6 +45,7 @@ async function readFlow(slug: string): Promise<FlowChartFile> {
   const parsed = JSON.parse(raw) as Partial<FlowChartFile>;
   return {
     name: parsed.name ?? slug,
+    published: parsed.published ?? false,
     nodes: (parsed.nodes ?? []).map(normalizeNode),
     edges: (parsed.edges ?? []).map(normalizeEdge),
   };
@@ -90,7 +91,7 @@ export function registerFlowFilesIpc(): void {
     const base = slugify(trimmed);
     const slug = await uniqueSlug(base, (candidate) => fileExists(flowFilePath(candidate)));
 
-    const flow: FlowChartFile = { name: trimmed, nodes: [], edges: [] };
+    const flow: FlowChartFile = { name: trimmed, published: false, nodes: [], edges: [] };
     await fs.writeFile(flowFilePath(slug), JSON.stringify(flow, null, 2), 'utf-8');
 
     return { slug, name: trimmed };

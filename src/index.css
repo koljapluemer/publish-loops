@@ -158,6 +158,19 @@ body {
   color: #b3261e;
 }
 
+.publish-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.75rem;
+  color: #444;
+  background: #fff;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #e2e2e2;
+  cursor: pointer;
+}
+
 /* Nodes */
 
 .react-flow__handle {

@@ -18,6 +18,7 @@ import { createTextNode } from './createTextNode';
 import { FlowInteractionProvider } from './FlowInteractionContext';
 import FloatingConnectionLine from './FloatingConnectionLine';
 import FloatingEdge from './FloatingEdge';
+import PublishToggle from './PublishToggle';
 import TextNode from './TextNode';
 import UndoToast from './UndoToast';
 
@@ -37,6 +38,7 @@ function FlowCanvas({ slug, mode }: FlowCanvasProps) {
   const {
     state,
     saveStatus,
+    setPublished,
     onNodesChange,
     onEdgesChange,
     onConnect,
@@ -110,6 +112,7 @@ function FlowCanvas({ slug, mode }: FlowCanvasProps) {
         <AutoSavePreview mode={mode} slug={slug} />
         {isEdit && <AddNodeButton onAdd={addNode} />}
         <div className="top-right-stack">
+          {isEdit && <PublishToggle published={state.published} onChange={setPublished} />}
           {saveStatus === 'saving' && <div className="save-status">Saving…</div>}
           {saveStatus === 'error' && <div className="save-status save-status--error">Save failed</div>}
           {pendingUndo && <UndoToast pendingUndo={pendingUndo} onUndo={undoDelete} onDismiss={dismissUndo} />}

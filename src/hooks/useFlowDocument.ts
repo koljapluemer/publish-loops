@@ -20,6 +20,7 @@ type FlowDocState =
       status: 'ready';
       slug: string;
       name: string;
+      published: boolean;
       nodes: FlowNode[];
       edges: FlowEdge[];
       pendingUndo: PendingUndo | null;
@@ -30,9 +31,10 @@ export type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
 
 type FlowDocAction =
   | { type: 'LOAD_START'; slug: string }
-  | { type: 'LOAD_SUCCESS'; slug: string; name: string; nodes: FlowNode[]; edges: FlowEdge[] }
+  | { type: 'LOAD_SUCCESS'; slug: string; name: string; published: boolean; nodes: FlowNode[]; edges: FlowEdge[] }
   | { type: 'LOAD_ERROR'; slug: string; message: string }
   | { type: 'RESET' }
+  | { type: 'SET_PUBLISHED'; published: boolean }
   | { type: 'APPLY_NODE_CHANGES'; changes: NodeChange<FlowNode>[] }
   | { type: 'APPLY_EDGE_CHANGES'; changes: EdgeChange<FlowEdge>[] }
   | { type: 'CONNECT'; edge: FlowEdge }
@@ -56,6 +58,7 @@ function reducer(state: FlowDocState, action: FlowDocAction): FlowDocState {
         status: 'ready',
         slug: action.slug,
         name: action.name,
+        published: action.published,
         nodes: action.nodes,
         edges: action.edges,
         pendingUndo: null,
@@ -71,6 +74,8 @@ function reducer(state: FlowDocState, action: FlowDocAction): FlowDocState {
   if (state.status !== 'ready') return state;
 
   switch (action.type) {
+    case 'SET_PUBLISHED':
+      return { ...state, published: action.published };
     case 'APPLY_NODE_CHANGES':
       return { ...state, nodes: applyNodeChanges(action.changes, state.nodes) };
     case 'APPLY_EDGE_CHANGES':
@@ -202,7 +207,7 @@ export function useFlowDocument(slug: string | null) {
       .then((flow: FlowChartFile) => {
         if (latestSlugRef.current !== slug) return;
         skipNextAutosaveRef.current = true;
-        dispatch({ type: 'LOAD_SUCCESS', slug, name: flow.name, nodes: flow.nodes, edges: flow.edges });
+        dispatch({ type: 'LOAD_SUCCESS', slug, name: flow.name, published: flow.published, nodes: flow.nodes, edges: flow.edges });
         setSaveStatus('idle');
       })
       .catch((error: Error) => {
@@ -219,9 +224,14 @@ export function useFlowDocument(slug: string | null) {
       return undefined;
     }
 
-    const { slug: readySlug, name, nodes, edges } = state;
+    const { slug: readySlug, name, published, nodes, edges } = state;
     const timer = setTimeout(() => {
-      const flow: FlowChartFile = { name, nodes: nodes.map(toPersistedNode), edges: edges.map(toPersistedEdge) };
+      const flow: FlowChartFile = {
+        name,
+        published,
+        nodes: nodes.map(toPersistedNode),
+        edges: edges.map(toPersistedEdge),
+      };
       setSaveStatus('saving');
       window.flowsApi
         .save(readySlug, flow)
@@ -231,6 +241,10 @@ export function useFlowDocument(slug: string | null) {
 
     return () => clearTimeout(timer);
   }, [state]);
+
+  const setPublished = useCallback((published: boolean) => {
+    dispatch({ type: 'SET_PUBLISHED', published });
+  }, []);
 
   const onNodesChange = useCallback((changes: NodeChange<FlowNode>[]) => {
     dispatch({ type: 'APPLY_NODE_CHANGES', changes });
@@ -297,6 +311,7 @@ export function useFlowDocument(slug: string | null) {
   return {
     state,
     saveStatus,
+    setPublished,
     onNodesChange,
     onEdgesChange,
     onConnect,

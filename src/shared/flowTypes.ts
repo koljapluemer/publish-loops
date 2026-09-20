@@ -27,6 +27,8 @@ export type FlowEdge = Edge<FloatingEdgeData, 'floating'>;
 
 export interface FlowChartFile {
   name: string;
+  /** Whether the koljasam.com SSG should publish this flow. */
+  published: boolean;
   nodes: FlowNode[];
   edges: FlowEdge[];
 }
