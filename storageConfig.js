@@ -1,8 +1,27 @@
 const fs = require('node:fs');
+const os = require('node:os');
 const path = require('node:path');
 const { parse } = require('yaml');
 
 const CONFIG_FILENAME = 'config.yml';
+
+function resolveBasePath(projectRoot, configuredPath) {
+  const value = configuredPath.trim();
+
+  if (value === '~') {
+    return os.homedir();
+  }
+
+  if (value.startsWith('~/')) {
+    return path.resolve(os.homedir(), value.slice(2));
+  }
+
+  if (value.startsWith('~')) {
+    throw new Error(`${CONFIG_FILENAME} basePath does not support user-home syntax such as "~user". Use an absolute path instead.`);
+  }
+
+  return path.resolve(projectRoot, value);
+}
 
 function readStorageConfig(projectRoot) {
   const configPath = path.join(projectRoot, CONFIG_FILENAME);
@@ -29,8 +48,8 @@ function readStorageConfig(projectRoot) {
   }
 
   return {
-    basePath: path.resolve(projectRoot, config.basePath),
+    basePath: resolveBasePath(projectRoot, config.basePath),
   };
 }
 
-module.exports = { readStorageConfig };
+module.exports = { readStorageConfig, resolveBasePath };

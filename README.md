@@ -52,5 +52,5 @@ the generated HTML and presentation can be edited independently.
 
 ## Notes
 
-- `config.yml` is local and gitignored. Set its required `basePath` to a data directory outside this repository. Relative paths are supported and resolve from the project root. The app creates `flows/`, `flows/images/`, and `flow-images/` beneath it as needed.
+- `config.yml` is local and gitignored. Set its required `basePath` to a data directory outside this repository. `~` and `~/...` expand to your home directory; relative paths resolve from the project root. The app creates `flows/`, `flows/images/`, and `flow-images/` beneath it as needed.
 - Flow files are plain JSON containing node positions, text, edges, and labels.
