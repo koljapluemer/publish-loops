@@ -1,13 +1,14 @@
 import { app } from 'electron';
 import path from 'node:path';
 import fs from 'node:fs/promises';
+import { readStorageConfig } from '../../storageConfig';
 
-// app.getAppPath() resolves to the project root (directory containing
-// package.json) only when the app is run unpackaged via `electron-forge
-// start`. This app is personal-use and dev-only (see spec.md); no packaged
-// build is in scope, so this is intentional and not a bug to "fix" later.
+function getStorageBasePath(): string {
+  return readStorageConfig(app.getAppPath()).basePath;
+}
+
 export function getFlowsDir(): string {
-  return path.join(app.getAppPath(), 'flows');
+  return path.join(getStorageBasePath(), 'flows');
 }
 
 export async function ensureFlowsDir(): Promise<string> {
@@ -27,7 +28,7 @@ export async function ensureImagesDir(): Promise<string> {
 }
 
 export function getPreviewImagesDir(): string {
-  return path.join(app.getAppPath(), 'flow-images');
+  return path.join(getStorageBasePath(), 'flow-images');
 }
 
 export async function ensurePreviewImagesDir(): Promise<string> {

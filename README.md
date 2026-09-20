@@ -2,7 +2,7 @@
 
 A personal, single-screen Electron app for building flow charts with automatically generated image previews.
 
-Each flow chart is a JSON file stored in the [`flows/`](./flows) folder (created automatically on first run) — that folder is the source of truth, not any in-app database.
+Each flow chart is a JSON file stored under the configured data path — those files are the source of truth, not any in-app database.
 
 ## Requirements
 
@@ -12,6 +12,8 @@ Each flow chart is a JSON file stored in the [`flows/`](./flows) folder (created
 
 ```bash
 npm install
+cp config.example.yml config.yml
+# Set basePath in config.yml to a data directory outside this repository.
 npm start
 ```
 
@@ -21,7 +23,7 @@ This runs the app in dev mode via Electron Forge, which is the only supported wa
 
 - **Top toolbar**: pick a flow chart from the dropdown, or click the `+` icon to create a new one (just give it a name).
 - **Edit mode**: drag nodes by their grip handle, type node text in the textarea, drag from a node's edge to another node to connect them, and click an edge to edit its label. Click the `+` button on the canvas to add a new node.
-- **Preview mode**: a minimal, chrome-free view where node text renders as Markdown. Opening it automatically writes a PNG to `flow-images/<flow-slug>.png` in the background.
+- **Preview mode**: a minimal, chrome-free view where node text renders as Markdown. Opening it automatically writes a PNG to `<basePath>/flow-images/<flow-slug>.png` in the background.
 
 Changes autosave to disk a short moment after you stop editing — there's no save button.
 
@@ -43,11 +45,12 @@ npm run make          # build platform installers (not the primary use case, see
 ## Static website
 
 The Eleventy website source lives in [`site/`](./site). It reads loop titles
-from `flows/*.json` and pairs them with the exported PNGs in `flow-images/`.
+from `<basePath>/flows/*.json` and pairs them with the exported PNGs in
+`<basePath>/flow-images/`.
 Templates, reusable components, and styles are kept in separate directories so
 the generated HTML and presentation can be edited independently.
 
 ## Notes
 
-- This is a personal-use, dev-only tool. Flow chart JSON files are read/written relative to the project root (`app.getAppPath()`), which only resolves correctly when running unpackaged via `npm start`. `npm run package`/`npm run make` are not a supported way to use this app.
-- `flows/*.json` files are plain JSON (node positions, text, edges, labels) and are meant to be committed to this repo alongside the code.
+- `config.yml` is local and gitignored. Set its required `basePath` to a data directory outside this repository. Relative paths are supported and resolve from the project root. The app creates `flows/`, `flows/images/`, and `flow-images/` beneath it as needed.
+- Flow files are plain JSON containing node positions, text, edges, and labels.

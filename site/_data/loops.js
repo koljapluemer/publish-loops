@@ -1,9 +1,11 @@
 const fs = require('node:fs');
 const path = require('node:path');
+const { readStorageConfig } = require('../../storageConfig');
 
 const projectRoot = path.resolve(__dirname, '../..');
-const flowsDirectory = path.join(projectRoot, 'flows');
-const previewImagesDirectory = path.join(projectRoot, 'flow-images');
+const { basePath } = readStorageConfig(projectRoot);
+const flowsDirectory = path.join(basePath, 'flows');
+const previewImagesDirectory = path.join(basePath, 'flow-images');
 
 /**
  * Maps the editor's on-disk flow format to the smaller public loop model used

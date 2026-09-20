@@ -1,9 +1,16 @@
+const path = require('node:path');
+const { readStorageConfig } = require('./storageConfig');
+
 module.exports = function (eleventyConfig) {
-  eleventyConfig.addWatchTarget('flows');
-  eleventyConfig.addWatchTarget('flow-images');
+  const { basePath } = readStorageConfig(__dirname);
+  const flowsDirectory = path.join(basePath, 'flows');
+  const previewImagesDirectory = path.join(basePath, 'flow-images');
+
+  eleventyConfig.addWatchTarget(flowsDirectory);
+  eleventyConfig.addWatchTarget(previewImagesDirectory);
 
   eleventyConfig.addPassthroughCopy({ 'site/assets': 'assets' });
-  eleventyConfig.addPassthroughCopy('flow-images');
+  eleventyConfig.addPassthroughCopy({ [previewImagesDirectory]: 'flow-images' });
 
   return {
     dir: {

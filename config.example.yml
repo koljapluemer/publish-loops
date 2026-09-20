@@ -1,0 +1,3 @@
+# Keep runtime data outside this repository.
+# Relative paths are supported and resolve from the repository root.
+basePath: /absolute/path/to/loop-manager-data
