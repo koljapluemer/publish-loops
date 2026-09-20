@@ -1,6 +1,7 @@
 import { app, BrowserWindow } from 'electron';
 import path from 'node:path';
 import started from 'electron-squirrel-startup';
+import { getWindowIconPath } from './main/appIcon';
 import { registerFlowFilesIpc } from './main/flowFilesIpc';
 import { registerFlowImagesIpc } from './main/flowImagesIpc';
 
@@ -17,6 +18,7 @@ const createWindow = () => {
   const mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
+    icon: getWindowIconPath(),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
     },

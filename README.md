@@ -19,6 +19,18 @@ npm start
 
 This runs the app in dev mode via Electron Forge, which is the only supported way to run it (see [Notes](#notes) below).
 
+With [just](https://github.com/casey/just) installed, `just dev` does the same (running `npm install` first).
+
+## Installing on Linux
+
+```bash
+just reinstall
+```
+
+Builds a `.deb` (Ubuntu/Debian) or `.rpm` (Fedora, installs `rpm-build` if missing) via Electron Forge, then (re)installs it with `sudo`. The distro is detected from `/etc/os-release`. The package installs the desktop entry and the icon from [`icons/`](./icons).
+
+An installed app can't read `config.yml` from the repo, so it reads `~/.config/loop-manager/config.yml` instead (`$XDG_CONFIG_HOME` is respected). `just reinstall` copies your repo `config.yml` there if none exists yet.
+
 ## Usage
 
 - **Top toolbar**: pick a flow chart from the dropdown, or click the `+` icon to create a new one (just give it a name).

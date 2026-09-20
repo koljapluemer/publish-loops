@@ -3,8 +3,14 @@ import path from 'node:path';
 import fs from 'node:fs/promises';
 import { readStorageConfig } from '../../storageConfig';
 
+// Dev runs read config.yml from the repo; an installed app has no writable repo root
+// (its app path is inside app.asar), so it reads config.yml from the per-user config dir.
+function getConfigRoot(): string {
+  return app.isPackaged ? app.getPath('userData') : app.getAppPath();
+}
+
 function getStorageBasePath(): string {
-  return readStorageConfig(app.getAppPath()).basePath;
+  return readStorageConfig(getConfigRoot()).basePath;
 }
 
 export function getFlowsDir(): string {

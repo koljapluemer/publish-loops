@@ -1,22 +1,34 @@
 import type { ForgeConfig } from '@electron-forge/shared-types';
 import { MakerSquirrel } from '@electron-forge/maker-squirrel';
 import { MakerZIP } from '@electron-forge/maker-zip';
-import { MakerDeb } from '@electron-forge/maker-deb';
-import { MakerRpm } from '@electron-forge/maker-rpm';
+import type { MakerDebConfig } from '@electron-forge/maker-deb';
+import type { MakerRpmConfig } from '@electron-forge/maker-rpm';
 import { VitePlugin } from '@electron-forge/plugin-vite';
 import { FusesPlugin } from '@electron-forge/plugin-fuses';
 import { FuseV1Options, FuseVersion } from '@electron/fuses';
 
+// Installed into the desktop's icon set by the deb/rpm makers; needs a PNG.
+const LINUX_PACKAGE_ICON = './icons/android-chrome-512x512.png';
+const LINUX_PACKAGE_OPTIONS = {
+  icon: LINUX_PACKAGE_ICON,
+  categories: ['Graphics'] as ['Graphics'],
+};
+
+// deb/rpm are declared by package name (not as instances) so `make --targets=...` finds their config.
+const debConfig: MakerDebConfig = { options: LINUX_PACKAGE_OPTIONS };
+const rpmConfig: MakerRpmConfig = { options: LINUX_PACKAGE_OPTIONS };
+
 const config: ForgeConfig = {
   packagerConfig: {
     asar: true,
+    extraResource: ['./icons'],
   },
   rebuildConfig: {},
   makers: [
     new MakerSquirrel({}),
     new MakerZIP({}, ['darwin']),
-    new MakerRpm({}),
-    new MakerDeb({}),
+    { name: '@electron-forge/maker-rpm', config: rpmConfig },
+    { name: '@electron-forge/maker-deb', config: debConfig },
   ],
   plugins: [
     new VitePlugin({
