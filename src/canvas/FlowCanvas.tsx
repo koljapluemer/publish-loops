@@ -12,13 +12,12 @@ import {
 } from '@xyflow/react';
 import { useFlowDocument } from '../hooks/useFlowDocument';
 import type { AppMode } from '../shared/appMode';
-import AddNodeButton from './AddNodeButton';
 import AutoSavePreview from './AutoSavePreview';
 import { createTextNode } from './createTextNode';
 import { FlowInteractionProvider } from './FlowInteractionContext';
 import FloatingConnectionLine from './FloatingConnectionLine';
 import FloatingEdge from './FloatingEdge';
-import PublishToggle from './PublishToggle';
+import FlowSidebar from './FlowSidebar';
 import TextNode from './TextNode';
 import UndoToast from './UndoToast';
 
@@ -39,6 +38,7 @@ function FlowCanvas({ slug, mode }: FlowCanvasProps) {
     state,
     saveStatus,
     setPublished,
+    setBody,
     onNodesChange,
     onEdgesChange,
     onConnect,
@@ -87,36 +87,39 @@ function FlowCanvas({ slug, mode }: FlowCanvasProps) {
   return (
     <FlowInteractionProvider value={interaction}>
       <div className="flow-canvas">
-        <ReactFlow
-          nodes={state.nodes}
-          edges={state.edges}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          onConnect={onConnect}
-          onPaneClick={handlePaneDoubleClick}
-          nodeTypes={nodeTypes}
-          edgeTypes={edgeTypes}
-          defaultEdgeOptions={defaultEdgeOptions}
-          connectionLineComponent={FloatingConnectionLine}
-          connectionRadius={40}
-          defaultMarkerColor={null}
-          nodesDraggable={isEdit}
-          nodesConnectable={isEdit}
-          elementsSelectable={isEdit}
-          zoomOnDoubleClick={!isEdit}
-          proOptions={{ hideAttribution: true }}
-        >
-          {isEdit && <Background />}
-          {isEdit && <Controls />}
-        </ReactFlow>
-        <AutoSavePreview mode={mode} slug={slug} />
-        {isEdit && <AddNodeButton onAdd={addNode} />}
-        <div className="top-right-stack">
-          {isEdit && <PublishToggle published={state.published} onChange={setPublished} />}
-          {saveStatus === 'saving' && <div className="save-status">Saving…</div>}
-          {saveStatus === 'error' && <div className="save-status save-status--error">Save failed</div>}
-          {pendingUndo && <UndoToast pendingUndo={pendingUndo} onUndo={undoDelete} onDismiss={dismissUndo} />}
+        <div className="flow-canvas-main">
+          <ReactFlow
+            nodes={state.nodes}
+            edges={state.edges}
+            onNodesChange={onNodesChange}
+            onEdgesChange={onEdgesChange}
+            onConnect={onConnect}
+            onPaneClick={handlePaneDoubleClick}
+            nodeTypes={nodeTypes}
+            edgeTypes={edgeTypes}
+            defaultEdgeOptions={defaultEdgeOptions}
+            connectionLineComponent={FloatingConnectionLine}
+            connectionRadius={40}
+            defaultMarkerColor={null}
+            nodesDraggable={isEdit}
+            nodesConnectable={isEdit}
+            elementsSelectable={isEdit}
+            zoomOnDoubleClick={!isEdit}
+            proOptions={{ hideAttribution: true }}
+          >
+            {isEdit && <Background />}
+            {isEdit && <Controls />}
+          </ReactFlow>
+          <AutoSavePreview mode={mode} slug={slug} />
+          <div className="top-right-stack">
+            {saveStatus === 'saving' && <div className="save-status">Saving…</div>}
+            {saveStatus === 'error' && <div className="save-status save-status--error">Save failed</div>}
+            {pendingUndo && <UndoToast pendingUndo={pendingUndo} onUndo={undoDelete} onDismiss={dismissUndo} />}
+          </div>
         </div>
+        {isEdit && (
+          <FlowSidebar published={state.published} body={state.body} onPublishedChange={setPublished} onBodyChange={setBody} />
+        )}
       </div>
     </FlowInteractionProvider>
   );

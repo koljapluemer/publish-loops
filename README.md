@@ -54,10 +54,10 @@ npm run make          # build platform installers (not the primary use case, see
 
 ## Published loops
 
-Toggle **Published** in edit mode to mark a flow for the website. This repo does not build any
+Use the sidebar in edit mode to toggle **Published** (marks a flow for the website) and to write an optional **Body** with extra info about the loop. This repo does not build any
 HTML; the koljasam.com static site generator reads the data directly:
 
-- `<basePath>/flows/<slug>.json`: `name`, `published`, nodes, edges
+- `<basePath>/flows/<slug>.json`: `name`, `published`, `body`, nodes, edges
 - `<basePath>/flow-images/<slug>.webp`: the preview image (written when a flow is opened in preview mode)
 
 ## Notes

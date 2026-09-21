@@ -29,6 +29,8 @@ export interface FlowChartFile {
   name: string;
   /** Whether the koljasam.com SSG should publish this flow. */
   published: boolean;
+  /** Optional extra info about this loop, shown alongside it on the site. */
+  body: string;
   nodes: FlowNode[];
   edges: FlowEdge[];
 }

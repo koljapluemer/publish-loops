@@ -100,9 +100,15 @@ body {
 }
 
 .flow-canvas {
-  position: relative;
+  display: flex;
   width: 100%;
   height: 100%;
+}
+
+.flow-canvas-main {
+  position: relative;
+  flex: 1;
+  min-width: 0;
 }
 
 .flow-canvas-message {
@@ -115,23 +121,6 @@ body {
 
 .flow-canvas-message--error {
   color: #b3261e;
-}
-
-.add-node-button {
-  position: absolute;
-  bottom: 1.25rem;
-  right: 1.25rem;
-  z-index: 5;
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: 50%;
-  border: none;
-  background: #1a1a1a;
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
 }
 
 .top-right-stack {
@@ -158,17 +147,49 @@ body {
   color: #b3261e;
 }
 
-.publish-toggle {
+/* Sidebar */
+
+.flow-sidebar {
+  width: 20rem;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  box-sizing: border-box;
+  border-left: 1px solid #e2e2e2;
+  background: #fafafa;
+}
+
+.flow-sidebar-toggle {
   display: flex;
   align-items: center;
   gap: 0.4rem;
-  font-size: 0.75rem;
+  font-size: 0.85rem;
   color: #444;
-  background: #fff;
-  padding: 0.2rem 0.5rem;
-  border-radius: 4px;
-  border: 1px solid #e2e2e2;
   cursor: pointer;
+}
+
+.flow-sidebar-field {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.75rem;
+  color: #666;
+}
+
+.flow-sidebar-body {
+  flex: 1;
+  min-height: 0;
+  resize: none;
+  padding: 0.5rem;
+  box-sizing: border-box;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 0.85rem;
 }
 
 /* Nodes */
