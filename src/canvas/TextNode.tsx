@@ -19,9 +19,9 @@ const IMAGE_POSITIONS: { value: ImagePosition; label: string }[] = [
 function TextNode({ id, data }: NodeProps<FlowNode>) {
   const { mode, updateNodeText, setNodeImage, setNodeImagePosition, deleteNode } = useFlowInteraction();
   const connection = useConnection();
-  // Whole-card "drop here" cue: lights up any node that's a legal target
-  // while a connection is actively being dragged from a different node.
-  const isConnectionTarget = connection.inProgress && connection.fromNode?.id !== id;
+  // Whole-card "drop here" cue includes the origin node because state
+  // transitions may legitimately loop back to the same state.
+  const isConnectionTarget = connection.inProgress;
 
   const image = data.image;
   const imagePosition = image?.position ?? 'above';

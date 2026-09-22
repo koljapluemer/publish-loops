@@ -1,7 +1,7 @@
 import { getBezierPath, type ConnectionLineComponentProps, type InternalNode } from '@xyflow/react';
-import { getEdgeParams } from './edgeGeometry';
+import { getBoundaryEndpoint } from './edgeRouting/nodeBounds';
 
-function FloatingConnectionLine({ toX, toY, fromPosition, toPosition, fromNode }: ConnectionLineComponentProps) {
+function FloatingConnectionLine({ toX, toY, toPosition, fromNode }: ConnectionLineComponentProps) {
   if (!fromNode) {
     return null;
   }
@@ -15,12 +15,12 @@ function FloatingConnectionLine({ toX, toY, fromPosition, toPosition, fromNode }
     internals: { positionAbsolute: { x: toX, y: toY } },
   } as unknown as InternalNode;
 
-  const { sx, sy } = getEdgeParams(fromNode, targetNode);
+  const sourceEndpoint = getBoundaryEndpoint(fromNode, targetNode);
 
   const [path] = getBezierPath({
-    sourceX: sx,
-    sourceY: sy,
-    sourcePosition: fromPosition,
+    sourceX: sourceEndpoint.x,
+    sourceY: sourceEndpoint.y,
+    sourcePosition: sourceEndpoint.position,
     targetX: toX,
     targetY: toY,
     targetPosition: toPosition,

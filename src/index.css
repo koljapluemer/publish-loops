@@ -257,7 +257,7 @@ body {
 }
 
 /* Whole-card cue for a legal drop target while a connection is being
-   dragged in from elsewhere — forgiving to aim at, not just the dot. Comes
+   dragged, including back onto its origin for a self-loop. Comes
    after .text-node--edit so its ring wins over the resting shadow. */
 .text-node--connection-target {
   box-shadow: 0 0 0 2px #2563eb;
