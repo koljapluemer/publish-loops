@@ -7,6 +7,29 @@ import { getBoundaryEndpoint } from './edgeRouting/nodeBounds';
 import { routeEdge } from './edgeRouting/routeEdge';
 import { useFlowInteraction } from './FlowInteractionContext';
 
+interface EdgeLabelDragHandleProps {
+  side: 'left' | 'right';
+  onPointerDown: (event: ReactPointerEvent<HTMLButtonElement>) => void;
+  onPointerMove: (event: ReactPointerEvent<HTMLButtonElement>) => void;
+  onReset: () => void;
+}
+
+function EdgeLabelDragHandle({ side, onPointerDown, onPointerMove, onReset }: EdgeLabelDragHandleProps) {
+  return (
+    <button
+      type="button"
+      className="edge-label-drag-handle"
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onDoubleClick={onReset}
+      title="Drag to bend edge; double-click to reset"
+      aria-label={`Drag edge label from ${side} side`}
+    >
+      <GripVertical size={14} />
+    </button>
+  );
+}
+
 function FloatingEdge({ id, source, target, data, style, markerEnd }: EdgeProps<FlowEdge>) {
   const { mode, updateEdgeLabel, updateEdgeLabelPosition, deleteEdge } = useFlowInteraction();
   const { screenToFlowPosition } = useReactFlow();
@@ -97,17 +120,12 @@ function FloatingEdge({ id, source, target, data, style, markerEnd }: EdgeProps<
           >
             {mode === 'edit' ? (
               <div className="edge-label-edit">
-                <button
-                  type="button"
-                  className="edge-label-drag-handle"
+                <EdgeLabelDragHandle
+                  side="left"
                   onPointerDown={handleDragStart}
                   onPointerMove={handleLabelDrag}
-                  onDoubleClick={() => updateEdgeLabelPosition(id, null)}
-                  title="Drag to bend edge; double-click to reset"
-                  aria-label="Drag edge label"
-                >
-                  <GripVertical size={14} />
-                </button>
+                  onReset={() => updateEdgeLabelPosition(id, null)}
+                />
                 <input
                   value={label}
                   onChange={(event) => setLabel(event.target.value)}
@@ -122,6 +140,12 @@ function FloatingEdge({ id, source, target, data, style, markerEnd }: EdgeProps<
                 >
                   <Trash2 size={12} />
                 </button>
+                <EdgeLabelDragHandle
+                  side="right"
+                  onPointerDown={handleDragStart}
+                  onPointerMove={handleLabelDrag}
+                  onReset={() => updateEdgeLabelPosition(id, null)}
+                />
               </div>
             ) : (
               <span>{label}</span>
