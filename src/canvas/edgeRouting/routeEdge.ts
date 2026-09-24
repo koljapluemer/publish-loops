@@ -8,12 +8,19 @@ interface RouteEdgeOptions {
   sourceNode: InternalNode;
   targetNode: InternalNode;
   curveShift: XYPosition;
-  selfLoopIndex: number;
+  selfLoopAngle: number;
+  selfLoopRadius: number;
 }
 
-export function routeEdge({ sourceNode, targetNode, curveShift, selfLoopIndex }: RouteEdgeOptions): RoutedEdge {
+export function routeEdge({
+  sourceNode,
+  targetNode,
+  curveShift,
+  selfLoopAngle,
+  selfLoopRadius,
+}: RouteEdgeOptions): RoutedEdge {
   if (sourceNode.id === targetNode.id) {
-    return routeSelfLoop(sourceNode, selfLoopIndex, curveShift);
+    return routeSelfLoop(sourceNode, selfLoopAngle, selfLoopRadius);
   }
 
   return routeNormalEdge(

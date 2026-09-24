@@ -3,9 +3,15 @@ import { GripVertical, Trash2 } from 'lucide-react';
 import type { PointerEvent as ReactPointerEvent } from 'react';
 import type { FlowEdge } from '../shared/flowTypes';
 import { useEditableValue } from '../hooks/useEditableValue';
-import { getBoundaryEndpoint } from './edgeRouting/nodeBounds';
+import { getBoundaryEndpoint, getBoundaryPointAtAngle, getNodeCenter } from './edgeRouting/nodeBounds';
 import { routeEdge } from './edgeRouting/routeEdge';
+import { defaultSelfLoopRadius, MIN_LOOP_RADIUS } from './edgeRouting/routeSelfLoop';
 import { useFlowInteraction } from './FlowInteractionContext';
+
+// Successive self-loops default to this angle apart (radians). The golden
+// angle keeps loops from ever landing on the same or a symmetric angle, no
+// matter how many accumulate on one node.
+const GOLDEN_ANGLE = Math.PI * (3 - Math.sqrt(5));
 
 interface EdgeLabelDragHandleProps {
   side: 'left' | 'right';
@@ -56,11 +62,13 @@ function FloatingEdge({ id, source, target, data, style, markerEnd }: EdgeProps<
   // A lone transition stays straight. Parallel transitions fan out, while
   // reverse transitions naturally land on the other side because reversing
   // the endpoints also reverses the perpendicular vector.
-  const curveOffset = hasReverseEdge
-    ? 32 + Math.max(directionIndex, 0) * 24
-    : sameDirectionEdges.length > 1
-      ? (directionIndex - (sameDirectionEdges.length - 1) / 2) * 48
-      : 0;
+  const curveOffset = isSelfLoop
+    ? 0
+    : hasReverseEdge
+      ? 32 + Math.max(directionIndex, 0) * 24
+      : sameDirectionEdges.length > 1
+        ? (directionIndex - (sameDirectionEdges.length - 1) / 2) * 48
+        : 0;
   const sourceEndpoint = isSelfLoop ? null : getBoundaryEndpoint(sourceNode, targetNode);
   const targetEndpoint = isSelfLoop ? null : getBoundaryEndpoint(targetNode, sourceNode);
   const baseDx = (targetEndpoint?.x ?? 0) - (sourceEndpoint?.x ?? 0);
@@ -70,18 +78,32 @@ function FloatingEdge({ id, source, target, data, style, markerEnd }: EdgeProps<
     x: (-baseDy / baseDistance) * curveOffset,
     y: (baseDx / baseDistance) * curveOffset,
   };
+  const selfLoopIndex = Math.max(directionIndex, 0);
+  const defaultLoopAngle = selfLoopIndex * GOLDEN_ANGLE;
+  const defaultLoopRadius = defaultSelfLoopRadius(selfLoopIndex);
+  // Each self-loop gets its own default angle and radius around the node;
+  // dragging its label reinterprets the stored offset as the vector from the
+  // node's center to the pointer (see handleLabelDrag), so both the side the
+  // loop bulges toward and how far it bulges out follow the drag.
+  let loopAngle = defaultLoopAngle;
+  let loopRadius = defaultLoopRadius;
+  if (isSelfLoop && data?.labelOffset) {
+    loopAngle = Math.atan2(data.labelOffset.y, data.labelOffset.x);
+    const nodeCenter = getNodeCenter(sourceNode);
+    const boundaryPoint = getBoundaryPointAtAngle(sourceNode, loopAngle);
+    const boundaryDistance = Math.hypot(boundaryPoint.x - nodeCenter.x, boundaryPoint.y - nodeCenter.y);
+    const pointerDistance = Math.hypot(data.labelOffset.x, data.labelOffset.y);
+    // The label sits at the curve's midpoint, which only picks up 3/4 of the
+    // control points' bulge — invert that factor so the label tracks the pointer.
+    loopRadius = Math.max(MIN_LOOP_RADIUS, (pointerDistance - boundaryDistance) / 0.75);
+  }
   const curveShift = data?.labelOffset ?? automaticCurveShift;
   const route = routeEdge({
     sourceNode,
     targetNode,
     curveShift,
-    selfLoopIndex: Math.max(directionIndex, 0),
-  });
-  const unshiftedRoute = routeEdge({
-    sourceNode,
-    targetNode,
-    curveShift: { x: 0, y: 0 },
-    selfLoopIndex: Math.max(directionIndex, 0),
+    selfLoopAngle: loopAngle,
+    selfLoopRadius: loopRadius,
   });
   const { x: labelX, y: labelY } = route.labelPoint;
 
@@ -90,6 +112,20 @@ function FloatingEdge({ id, source, target, data, style, markerEnd }: EdgeProps<
     event.preventDefault();
     event.stopPropagation();
     const position = screenToFlowPosition({ x: event.clientX, y: event.clientY });
+
+    if (isSelfLoop) {
+      const nodeCenter = getNodeCenter(sourceNode);
+      updateEdgeLabelPosition(id, { x: position.x - nodeCenter.x, y: position.y - nodeCenter.y });
+      return;
+    }
+
+    const unshiftedRoute = routeEdge({
+      sourceNode,
+      targetNode,
+      curveShift: { x: 0, y: 0 },
+      selfLoopAngle: defaultLoopAngle,
+      selfLoopRadius: defaultLoopRadius,
+    });
     updateEdgeLabelPosition(id, {
       // A cubic's two control points contribute 3/4 of their shared shift
       // at t=0.5, so invert that factor to keep the drag handle under the pointer.

@@ -27,13 +27,13 @@ function center(bounds: NodeBounds): XYPosition {
   };
 }
 
-/** Returns where the center-to-center ray exits a rectangular node. */
-export function getBoundaryEndpoint(node: InternalNode, otherNode: InternalNode): EdgeEndpoint {
-  const bounds = getNodeBounds(node);
+export function getNodeCenter(node: InternalNode): XYPosition {
+  return center(getNodeBounds(node));
+}
+
+/** Returns where a ray from the node's center in direction (dx, dy) exits its bounds. */
+function boundaryPointForDirection(bounds: NodeBounds, dx: number, dy: number): EdgeEndpoint {
   const nodeCenter = center(bounds);
-  const otherCenter = center(getNodeBounds(otherNode));
-  const dx = otherCenter.x - nodeCenter.x;
-  const dy = otherCenter.y - nodeCenter.y;
 
   if (dx === 0 && dy === 0) {
     return { x: bounds.x + bounds.width, y: nodeCenter.y, position: Position.Right };
@@ -49,4 +49,18 @@ export function getBoundaryEndpoint(node: InternalNode, otherNode: InternalNode)
     return { x, y, position: dx < 0 ? Position.Left : Position.Right };
   }
   return { x, y, position: dy < 0 ? Position.Top : Position.Bottom };
+}
+
+/** Returns where the center-to-center ray exits a rectangular node. */
+export function getBoundaryEndpoint(node: InternalNode, otherNode: InternalNode): EdgeEndpoint {
+  const bounds = getNodeBounds(node);
+  const nodeCenter = center(bounds);
+  const otherCenter = center(getNodeBounds(otherNode));
+  return boundaryPointForDirection(bounds, otherCenter.x - nodeCenter.x, otherCenter.y - nodeCenter.y);
+}
+
+/** Returns where a ray from the node's center at the given angle (radians) exits its bounds. */
+export function getBoundaryPointAtAngle(node: InternalNode, angle: number): EdgeEndpoint {
+  const bounds = getNodeBounds(node);
+  return boundaryPointForDirection(bounds, Math.cos(angle), Math.sin(angle));
 }

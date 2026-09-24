@@ -1,29 +1,28 @@
 import type { InternalNode, XYPosition } from '@xyflow/react';
-import { getNodeBounds } from './nodeBounds';
+import { getBoundaryPointAtAngle } from './nodeBounds';
 import { cubicPath, cubicPoint, type RoutedEdge } from './pathMath';
 
-const BASE_LOOP_RADIUS = 64;
-const LOOP_SPACING = 28;
+export const BASE_LOOP_RADIUS = 64;
+export const LOOP_RADIUS_STEP = 12;
+export const MIN_LOOP_RADIUS = 28;
 
-export function routeSelfLoop(node: InternalNode, loopIndex: number, curveShift: XYPosition): RoutedEdge {
-  const bounds = getNodeBounds(node);
-  const radius = BASE_LOOP_RADIUS + loopIndex * LOOP_SPACING;
-  const sourcePoint = {
-    x: bounds.x + bounds.width,
-    y: bounds.y + bounds.height * 0.68,
+const LOOP_ANGULAR_HALF_SPREAD = (26 * Math.PI) / 180;
+
+/**
+ * Routes a loop that bulges outward from the node at `loopAngle` (radians,
+ * 0 = pointing right) by `radius` pixels. The two anchor points straddle
+ * that angle, so distinct `loopAngle`s always produce distinct anchors —
+ * unlike a fixed anchor pair that only grows in radius.
+ */
+export function routeSelfLoop(node: InternalNode, loopAngle: number, radius: number): RoutedEdge {
+  const sourcePoint = getBoundaryPointAtAngle(node, loopAngle - LOOP_ANGULAR_HALF_SPREAD);
+  const targetPoint = getBoundaryPointAtAngle(node, loopAngle + LOOP_ANGULAR_HALF_SPREAD);
+  const bulge: XYPosition = {
+    x: Math.cos(loopAngle) * radius,
+    y: Math.sin(loopAngle) * radius,
   };
-  const targetPoint = {
-    x: bounds.x + bounds.width,
-    y: bounds.y + bounds.height * 0.32,
-  };
-  const firstControl = {
-    x: sourcePoint.x + radius + curveShift.x,
-    y: sourcePoint.y + radius * 0.35 + curveShift.y,
-  };
-  const secondControl = {
-    x: targetPoint.x + radius + curveShift.x,
-    y: targetPoint.y - radius * 0.35 + curveShift.y,
-  };
+  const firstControl = { x: sourcePoint.x + bulge.x, y: sourcePoint.y + bulge.y };
+  const secondControl = { x: targetPoint.x + bulge.x, y: targetPoint.y + bulge.y };
 
   return {
     path: cubicPath(sourcePoint, firstControl, secondControl, targetPoint),
@@ -31,4 +30,9 @@ export function routeSelfLoop(node: InternalNode, loopIndex: number, curveShift:
     sourcePoint,
     targetPoint,
   };
+}
+
+/** Radius for a self-loop that hasn't been manually dragged, spread out by index so stacked loops stay legible. */
+export function defaultSelfLoopRadius(loopIndex: number): number {
+  return BASE_LOOP_RADIUS + loopIndex * LOOP_RADIUS_STEP;
 }
